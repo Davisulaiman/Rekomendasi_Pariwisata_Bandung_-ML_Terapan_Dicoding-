@@ -55,20 +55,12 @@ Dataset terdiri dari:
    * Kolom: `User_Id`, `Place_Id`, `Place_Ratings`
    * Tidak ada missing values atau duplikasi
 
-**Summary Insight:**
-
-* Distribusi rating 1–5 merata dengan kecenderungan ke nilai tinggi.
-* Kota difokuskan pada `City == Bandung`.
-* Semua fitur relevan dijelaskan dan digunakan sesuai kebutuhan model.
-
 ## Data Preparation
-
-Urutan tahapan:
 
 1. **Cleaning**
 
    * Menghapus kolom tidak relevan (`Unnamed: 11`, `Unnamed: 12`)
-   * Menangani missing values pada `Time_Minutes` dengan imputasi rata-rata/median atau menghapus baris jika sangat tidak lengkap
+   * Menangani missing values pada `Time_Minutes`
    * Filter tempat wisata hanya `City == "Bandung"`
 
 2. **Preprocessing Teks**
@@ -89,43 +81,65 @@ Urutan tahapan:
 
 * **Prinsip:** Menggunakan cosine similarity antar TF-IDF vektor konten
 * **Fungsi:** Memberikan rekomendasi berdasarkan kesamaan konten
-* **Parameter:** TF-IDF max\_features = 5000, ngram\_range = (1,2)
+* **Output Rekomendasi (berdasarkan input: 'Trans Studio Bandung')**:
+
+  1. Chingu Cafe Little Seoul
+  2. Taman Badak
+  3. NuArt Sculpture Park
+  4. Kiara Artha Park
+  5. Upside Down World Bandung
+  6. Jendela Alam
+  7. Panghegar Waterboom Bandung
+  8. Sudut Pandang Bandung
+  9. Batununggal Indah Club
+  10. Kampung Batu Malakasari
 
 ### Collaborative Filtering
 
-* **Prinsip:** Item-Based k-NN pada matriks user-item
-* **Parameter:**
+* **Prinsip:** Item-Based k-NN atau Matrix Factorization
+* **Model:** Neural Collaborative Filtering (keras)
+* **Metode Training:** 100 epoch, RMSE converging ke \~0.36
+* **Output Rekomendasi untuk User 152**:
 
-  * K = 20 (jumlah tetangga terdekat)
-  * Similarity metric = cosine
-* **Alternatif:** Matrix factorization (Singular Value Decomposition)
+  * Tempat dengan rating tertinggi dari user:
 
-### Perbandingan:
+    * Kebun Binatang Bandung : Cagar Alam
+    * Taman Lalu Lintas Ade Irma Suryani Nasution : Taman Hiburan
+    * Museum Barli : Budaya
+    * Monumen Perjuangan Rakyat Jawa Barat : Budaya
+    * Taman Begonia : Cagar Alam
 
-| Pendekatan              | Kelebihan                                         | Kekurangan                           |
-| ----------------------- | ------------------------------------------------- | ------------------------------------ |
-| Content-Based Filtering | Tidak butuh data pengguna lain (cold-start ready) | Terbatas pada item serupa            |
-| Collaborative Filtering | Menangkap pola preferensi kompleks                | Tidak cocok untuk pengguna/item baru |
+  * Top 10 Rekomendasi:
+
+    1. Upside Down World Bandung (Taman Hiburan, Rp100.000, 4.0)
+    2. Taman Lansia (Taman Hiburan, Gratis, 4.4)
+    3. Selasar Sunaryo Art Space (Taman Hiburan, Rp25.000, 4.6)
+    4. Teras Cikapundung BBWS (Taman Hiburan, Gratis, 4.3)
+    5. Museum Pos Indonesia (Budaya, Gratis, 4.5)
+    6. Ciwangun Indah Camp (Cagar Alam, Rp10.000, 4.3)
+    7. Curug Batu Templek (Cagar Alam, Rp5.000, 4.1)
+    8. Taman Budaya Jawa Barat (Budaya, Gratis, 4.3)
+    9. Masjid Agung Trans Studio Bandung (Tempat Ibadah, Gratis, 4.8)
+    10. Sanghyang Heuleut (Cagar Alam, Rp10.000, 4.4)
 
 ## Evaluation
 
 ### Metrik Evaluasi:
 
-* **Precision\@N**: relevansi dalam top-N hasil
-* **Recall\@N**: seberapa besar item relevan ditemukan
-* **MAP (Mean Average Precision)**: evaluasi ranking
+| Metrik                             | Nilai Hasil Model | Deskripsi                                                                                                                                                                                                                                |
+| ---------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Root Mean Squared Error (RMSE)** | **0.3602**        | Mengukur rata-rata selisih kuadrat antara rating prediksi dan rating aktual. Digunakan untuk mengevaluasi performa model collaborative filtering dalam memprediksi rating tempat wisata. Semakin kecil nilai RMSE, semakin akurat model. |
 
 ### Hasil Evaluasi:
 
-* Content-Based unggul untuk cold-start (pengguna baru)
-* Collaborative unggul untuk pengguna aktif
+* Content-Based Filtering menunjukkan hasil memuaskan untuk cold-start (pengguna baru) tanpa memerlukan riwayat interaksi.
+* Collaborative Filtering dilatih selama **100 epoch**, dengan nilai **root mean squared error (RMSE)** validasi mendekati **0.36**, menunjukkan prediksi rating yang cukup akurat.
+* Model collaborative mampu memberikan personalisasi rekomendasi dengan mempertimbangkan preferensi pengguna aktif.
 
 ### Hubungan dengan Business Understanding:
 
-* Model mampu menjawab dua permasalahan utama
-* Meningkatkan pengalaman pengguna dalam memilih destinasi
-* Content-Based menjawab kebutuhan wisatawan baru
-* Collaborative meningkatkan loyalitas pengguna aktif
+* Model menjawab semua problem statement dan mencapai goals
+* Meningkatkan pengalaman pengguna baru dan lama dalam memilih wisata
 
 ## Contoh Tempat Wisata di Bandung
 
@@ -138,7 +152,3 @@ Urutan tahapan:
 * Taman Hutan Raya Djuanda
 
 ---
-
-**Catatan Tambahan:**
-
-* Rencana pengembangan: Hybrid Recommender, Visualisasi rekomendasi dengan Streamlit/Dash
