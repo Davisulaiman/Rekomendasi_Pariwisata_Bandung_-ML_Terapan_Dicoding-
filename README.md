@@ -1,6 +1,6 @@
 # Laporan Proyek Machine Learning – Rekomendasi Wisata Kota Bandung
 
-![Iconic Bandung](assets/iconic_bandung.png)
+![Iconic Bandung](assets/iconic_bandung.jpeg)
 
 ## Domain Proyek
 
@@ -119,10 +119,17 @@ $RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }$
 
 Rekomendasi untuk pengguna yang menyukai **Trans Studio Bandung**:
 
-1. Sudut Pandang Bandung
-2. Kiara Artha Park
-3. Panghegar Waterboom
-4. Chingu Cafe
+1.	Chingu Cafe Little Seoul	Taman Hiburan
+2.	Taman Badak	Taman Hiburan
+3.	NuArt Sculpture Park	Taman Hiburan
+4.	Kiara Artha Park	Taman Hiburan
+5.	Upside Down World Bandung	Taman Hiburan
+6.	Jendela Alam	Taman Hiburan
+7.	Panghegar Waterboom Bandung	Taman Hiburan
+8.	Sudut Pandang Bandung	Taman Hiburan
+9.	Batununggal Indah Club	Taman Hiburan
+10. Kampung Batu Malakasari	Taman Hiburan
+
 
 ![CBF Output](assets/cbf_output.png)
 
@@ -130,13 +137,73 @@ Rekomendasi untuk pengguna yang menyukai **Trans Studio Bandung**:
 
 ### Collaborative Filtering
 
-Rekomendasi top-5 berdasarkan histori pengguna:
+Rekomendasi top-10 berdasarkan histori pengguna:
 
-1. Dago Dreampark
-2. The Lodge Maribaya
-3. Lembang Park & Zoo
-4. Farmhouse Susu Lembang
-5. Floating Market Lembang
+Daftar rekomendasi untuk: User 152
+============================================= 
+
+Tempat dengan rating wisata paling tinggi dari user
+------------------------------------------------------------
+Kebun Binatang Bandung : Cagar Alam
+Taman Lalu Lintas Ade Irma Suryani Nasution : Taman Hiburan
+Museum Barli : Budaya
+Monumen Perjuangan Rakyat Jawa Barat : Budaya
+Taman Begonia : Cagar Alam
+
+------------------------------------------------------------
+Top 10 Rekomendasi Tempat Wisata untuk Anda
+------------------------------------------------------------
+1. Upside Down World Bandung
+    Kategori       : Taman Hiburan
+    Harga Tiket    : 100000
+    Rating Wisata  : 4.0
+
+2. Taman Lansia
+    Kategori       : Taman Hiburan
+    Harga Tiket    : 0
+    Rating Wisata  : 4.4
+
+3. Selasar Sunaryo Art Space
+    Kategori       : Taman Hiburan
+    Harga Tiket    : 25000
+    Rating Wisata  : 4.6
+
+4. Teras Cikapundung BBWS
+    Kategori       : Taman Hiburan
+    Harga Tiket    : 0
+    Rating Wisata  : 4.3
+
+5. Museum Pos Indonesia
+    Kategori       : Budaya
+    Harga Tiket    : 0
+    Rating Wisata  : 4.5
+
+6. Ciwangun Indah Camp Official
+    Kategori       : Cagar Alam
+    Harga Tiket    : 10000
+    Rating Wisata  : 4.3
+
+7. Curug Batu Templek
+    Kategori       : Cagar Alam
+    Harga Tiket    : 5000
+    Rating Wisata  : 4.1
+
+8. Taman Budaya Jawa Barat
+    Kategori       : Budaya
+    Harga Tiket    : 0
+    Rating Wisata  : 4.3
+
+9. Masjid Agung Trans Studio Bandung
+    Kategori       : Tempat Ibadah
+    Harga Tiket    : 0
+    Rating Wisata  : 4.8
+
+10. Sanghyang Heuleut
+    Kategori       : Cagar Alam
+    Harga Tiket    : 10000
+    Rating Wisata  : 4.4
+
+=============================================
 
 ![CF Output](assets/cf_output.png)
 
@@ -204,10 +271,3 @@ Rekomendasi top-5 berdasarkan histori pengguna:
 5. Dengan peningkatan fitur dan evaluasi berkelanjutan, sistem ini dapat menjadi komponen penting dalam layanan rekomendasi wisata berbasis data di tingkat kota.
 
 ---
-
-> *Catatan gambar yang dapat ditambahkan:*
->
-> * Gambar 1: Histogram distribusi rating wisatawan
-> * Gambar 3: Grafik training/validation loss model CF
-> * Gambar 4: Contoh hasil rekomendasi sistem CBF
-> * Gambar 5: Contoh hasil rekomendasi sistem CF (user-based)
