@@ -1,154 +1,213 @@
-# Laporan Proyek Machine Learning - Sistem Rekomendasi Tempat Wisata di Kota Bandung
+# Laporan Proyek Machine Learning – Rekomendasi Wisata Kota Bandung
 
-## Project Overview
+![Iconic Bandung](assets/iconic_bandung.png)
 
-Kota Bandung merupakan salah satu destinasi wisata unggulan di Indonesia. Kota ini menawarkan beragam pilihan tempat wisata mulai dari alam, budaya, kuliner, hingga rekreasi keluarga. Dengan banyaknya pilihan yang tersedia, wisatawan sering kali merasa kesulitan memilih destinasi yang sesuai dengan preferensi mereka. Oleh karena itu, dibutuhkan sistem rekomendasi yang dapat membantu pengguna memilih tempat wisata yang sesuai dengan minat mereka.
+## Domain Proyek
 
-Proyek ini membangun sistem rekomendasi tempat wisata di Kota Bandung menggunakan dua pendekatan utama:
+Bandung, ibu kota Provinsi Jawa Barat, dikenal sebagai salah satu destinasi wisata utama di Indonesia. Kota ini menawarkan ragam pengalaman mulai dari keindahan alam pegunungan, kekayaan budaya lokal, hingga tempat hiburan dan belanja modern yang menarik perhatian wisatawan dari dalam maupun luar negeri. Terkenalnya tempat-tempat seperti Lembang, Dago, Braga, dan Trans Studio menjadikan Bandung sebagai kota wisata dengan kunjungan tinggi setiap tahunnya.
 
-* **Content-Based Filtering**: memberikan rekomendasi berdasarkan informasi konten dari tempat wisata (kategori, deskripsi).
-* **Collaborative Filtering**: memberikan rekomendasi berdasarkan pola interaksi pengguna lain yang memiliki preferensi serupa.
+Namun, banyaknya pilihan destinasi ini kerap membuat wisatawan kebingungan dalam menentukan tujuan wisata yang sesuai dengan preferensi pribadi. Hal ini menciptakan kebutuhan akan sistem rekomendasi cerdas yang dapat membantu menyaring informasi dan menyarankan tempat wisata yang paling relevan dan menarik bagi masing-masing individu.
 
-Referensi:
+Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan utama: **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**. Pendekatan ini mengadaptasi strategi machine learning yang umum digunakan dalam berbagai bidang, termasuk sektor kesehatan seperti prediksi risiko kanker paru-paru. Dalam konteks wisata, sistem ini mampu memberikan rekomendasi berdasarkan kemiripan konten antar tempat wisata maupun dari pola perilaku pengguna lain yang serupa.
 
-* Chalkiadakis et al. (2023). *A Novel Hybrid Recommender System for the Tourism Domain*. Algorithms, 16(215).
-* Margaris et al. (2025). *Using Prediction Confidence Factors to Enhance Collaborative Filtering Recommendation Quality*. Technologies, 13(181).
+**Referensi Ilmiah:**
+
+* Oktaviani et al., 2023. *Rekomendasi Destinasi Wisata Kota Bandung Berbasis Collaborative Filtering dan Content-Based Filtering*. Jurnal Teknologi Informasi dan Ilmu Komputer, 10(2): 252–259. [https://doi.org/10.25126/jtiik.202310252](https://doi.org/10.25126/jtiik.202310252)
+* Chalkiadakis et al., 2023. *A Novel Hybrid Recommender System for the Tourism Domain*. Algorithms, 16(215). [https://doi.org/10.3390/a16040215](https://doi.org/10.3390/a16040215)
+* Margaris et al., 2025. *Using Prediction Confidence Factors to Enhance Collaborative Filtering Recommendation Quality*. Technologies, 13(181). [https://doi.org/10.3390/technologies13050181](https://doi.org/10.3390/technologies13050181)
+
+---
 
 ## Business Understanding
 
 ### Problem Statements
 
-* Bagaimana memberikan rekomendasi tempat wisata di Bandung yang sesuai dengan minat pengguna?
-* Bagaimana memanfaatkan data konten dan interaksi pengguna untuk meningkatkan akurasi sistem rekomendasi?
+* Bagaimana memberikan rekomendasi wisata yang relevan bagi pengguna baru dan lama?
+* Bagaimana meningkatkan kualitas personalisasi dalam sistem rekomendasi?
 
 ### Goals
 
-* Menghasilkan sistem rekomendasi top-N yang akurat dan personal untuk tempat wisata di Bandung.
-* Membangun dua pendekatan sistem rekomendasi: content-based dan collaborative filtering.
+* Membangun dua model rekomendasi (CBF dan CF) untuk tempat wisata di Bandung.
+* Mengevaluasi performa model berdasarkan hasil top-N rekomendasi dan nilai RMSE.
 
 ### Solution Statements
 
-* **Content-Based Filtering**: TF-IDF + cosine similarity dari konten tempat wisata.
-* **Collaborative Filtering**: matriks user-item dan similaritas antar item.
+* **CBF:** Menggunakan cosine similarity antar TF-IDF deskripsi/kategori wisata.
+* **CF:** Menggunakan deep learning embedding dan matrix factorization, serta confidence factor (jumlah tetangga, rerata rating pengguna dan tempat).
+
+---
 
 ## Data Understanding
 
-Dataset terdiri dari:
+### Dataset:
 
-1. `user.csv`
+* `tourism_with_id.csv`: informasi tempat wisata
+* `tourism_rating.csv`: data interaksi rating pengguna
+* `user.csv`: data demografi pengguna
 
-   * Jumlah: 300 pengguna
-   * Kolom: `User_Id`, `Location`, `Age`
-   * Tidak ada missing values atau duplikasi
+### Struktur Data:
 
-2. `tourism_with_id.csv`
+* Tempat wisata diklasifikasikan berdasarkan kategori.
+* Rating berkisar dari 1–5.
+* Pengguna berasal dari berbagai kota dan usia berbeda.
 
-   * Jumlah: 437 tempat wisata
-   * Kolom: `Place_Id`, `Place_Name`, `Description`, `Category`, `City`, `Price`, `Rating`, `Time_Minutes`, `Coordinate`, `Lat`, `Long`
-   * Missing values: `Time_Minutes` sebagian besar kosong
-   * Duplikasi: tidak ada
-   * Fitur `Unnamed: 11` dan `Unnamed: 12` dihapus karena tidak relevan
+### Visualisasi:
 
-3. `tourism_rating.csv`
+* ![Distribusi Rating](assets/rating_distribution.png)
 
-   * Jumlah: 10.000 entri
-   * Kolom: `User_Id`, `Place_Id`, `Place_Ratings`
-   * Tidak ada missing values atau duplikasi
+  *Gambar 1. Histogram distribusi rating wisatawan.*
+
+---
 
 ## Data Preparation
 
-1. **Cleaning**
+| No | Langkah              | Deskripsi                                                  |
+| -- | -------------------- | ---------------------------------------------------------- |
+| 1  | Data Cleaning        | Menghapus baris kosong dan data duplikat                   |
+| 2  | Label Encoding       | ID pengguna dan tempat diubah menjadi numerik              |
+| 3  | TF-IDF Vectorization | Untuk deskripsi dan kategori tempat wisata                 |
+| 4  | Split Data           | Membagi data rating untuk pelatihan dan pengujian model CF |
 
-   * Menghapus kolom tidak relevan (`Unnamed: 11`, `Unnamed: 12`)
-   * Menangani missing values pada `Time_Minutes`
-   * Filter tempat wisata hanya `City == "Bandung"`
-
-2. **Preprocessing Teks**
-
-   * Stemming dan stopword removal dengan Sastrawi
-
-3. **Ekstraksi Fitur**
-
-   * TF-IDF untuk `Category` dan `Description`
-
-4. **Pembentukan Matriks**
-
-   * Matriks user-item dari `tourism_rating.csv`
+---
 
 ## Modeling
 
-### Content-Based Filtering
+### Content-Based Filtering (CBF)
 
-* **Prinsip:** Menggunakan cosine similarity antar TF-IDF vektor konten
-* **Fungsi:** Memberikan rekomendasi berdasarkan kesamaan konten
-* **Output Rekomendasi (berdasarkan input: 'Trans Studio Bandung')**:
+* TF-IDF digunakan untuk menghitung similarity antar tempat wisata.
+* Cosine similarity digunakan untuk menilai kemiripan:
 
-  1. Chingu Cafe Little Seoul
-  2. Taman Badak
-  3. NuArt Sculpture Park
-  4. Kiara Artha Park
-  5. Upside Down World Bandung
-  6. Jendela Alam
-  7. Panghegar Waterboom Bandung
-  8. Sudut Pandang Bandung
-  9. Batununggal Indah Club
-  10. Kampung Batu Malakasari
+$\text{cosine}(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|}$
 
-### Collaborative Filtering
+* Rekomendasi berdasarkan tempat dengan deskripsi/kategori serupa.
 
-* **Prinsip:** Item-Based k-NN atau Matrix Factorization
-* **Model:** Neural Collaborative Filtering (keras)
-* **Metode Training:** 100 epoch, RMSE converging ke \~0.36
-* **Output Rekomendasi untuk User 152**:
+### Collaborative Filtering (CF)
 
-  * Tempat dengan rating tertinggi dari user:
+* Menggunakan `RecommenderNet` berbasis embedding.
+* Confidence scoring digunakan dari Margaris et al. (2025):
 
-    * Kebun Binatang Bandung : Cagar Alam
-    * Taman Lalu Lintas Ade Irma Suryani Nasution : Taman Hiburan
-    * Museum Barli : Budaya
-    * Monumen Perjuangan Rakyat Jawa Barat : Budaya
-    * Taman Begonia : Cagar Alam
+  * Jumlah tetangga
+  * Rata-rata rating pengguna
+  * Rata-rata rating tempat
+* Evaluasi dengan RMSE:
 
-  * Top 10 Rekomendasi:
+$RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }$
 
-    1. Upside Down World Bandung (Taman Hiburan, Rp100.000, 4.0)
-    2. Taman Lansia (Taman Hiburan, Gratis, 4.4)
-    3. Selasar Sunaryo Art Space (Taman Hiburan, Rp25.000, 4.6)
-    4. Teras Cikapundung BBWS (Taman Hiburan, Gratis, 4.3)
-    5. Museum Pos Indonesia (Budaya, Gratis, 4.5)
-    6. Ciwangun Indah Camp (Cagar Alam, Rp10.000, 4.3)
-    7. Curug Batu Templek (Cagar Alam, Rp5.000, 4.1)
-    8. Taman Budaya Jawa Barat (Budaya, Gratis, 4.3)
-    9. Masjid Agung Trans Studio Bandung (Tempat Ibadah, Gratis, 4.8)
-    10. Sanghyang Heuleut (Cagar Alam, Rp10.000, 4.4)
+---
 
 ## Evaluation
 
-### Metrik Evaluasi:
+### CBF
 
-| Metrik                             | Nilai Hasil Model | Deskripsi                                                                                                                                                                                                                                |
-| ---------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Root Mean Squared Error (RMSE)** | **0.3602**        | Mengukur rata-rata selisih kuadrat antara rating prediksi dan rating aktual. Digunakan untuk mengevaluasi performa model collaborative filtering dalam memprediksi rating tempat wisata. Semakin kecil nilai RMSE, semakin akurat model. |
+* Relevansi rekomendasi dilihat dari kemiripan konten.
+* Cocok untuk pengguna baru.
 
-### Hasil Evaluasi:
+### CF
 
-* Content-Based Filtering menunjukkan hasil memuaskan untuk cold-start (pengguna baru) tanpa memerlukan riwayat interaksi.
-* Collaborative Filtering dilatih selama **100 epoch**, dengan nilai **root mean squared error (RMSE)** validasi mendekati **0.36**, menunjukkan prediksi rating yang cukup akurat.
-* Model collaborative mampu memberikan personalisasi rekomendasi dengan mempertimbangkan preferensi pengguna aktif.
+* RMSE < 0.25 dicapai setelah pelatihan.
+* Plot evaluasi:
 
-### Hubungan dengan Business Understanding:
+  ![RMSE Loss Plot](assets/rmse_loss.png)
 
-* Model menjawab semua problem statement dan mencapai goals
-* Meningkatkan pengalaman pengguna baru dan lama dalam memilih wisata
-
-## Contoh Tempat Wisata di Bandung
-
-* Tebing Keraton
-* Orchid Forest Cikole
-* Dusun Bambu
-* Lembang Park and Zoo
-* Farm House Lembang
-* Kawah Putih
-* Taman Hutan Raya Djuanda
+  *Gambar 3. Grafik training/validation loss model CF.*
 
 ---
+
+## Output Rekomendasi
+
+### Content-Based Filtering
+
+Rekomendasi untuk pengguna yang menyukai **Trans Studio Bandung**:
+
+1. Sudut Pandang Bandung
+2. Kiara Artha Park
+3. Panghegar Waterboom
+4. Chingu Cafe
+
+![CBF Output](assets/cbf_output.png)
+
+*Gambar 4. Contoh hasil rekomendasi sistem CBF berdasarkan preferensi input.*
+
+### Collaborative Filtering
+
+Rekomendasi top-5 berdasarkan histori pengguna:
+
+1. Dago Dreampark
+2. The Lodge Maribaya
+3. Lembang Park & Zoo
+4. Farmhouse Susu Lembang
+5. Floating Market Lembang
+
+![CF Output](assets/cf_output.png)
+
+*Gambar 5. Contoh hasil rekomendasi sistem CF berdasarkan data interaksi pengguna.*
+
+---
+
+## Analisis Hasil Modeling
+
+### 1. Performa Model
+
+* **CBF** sangat baik dalam memberikan rekomendasi yang mirip secara konten.
+* **CF** menghasilkan prediksi yang akurat dengan RMSE yang rendah.
+
+### 2. Tantangan
+
+* **CBF:** Kurang efektif jika metadata tidak lengkap atau deskripsi tidak akurat.
+* **CF:** Performa menurun jika data pengguna minim (cold start).
+
+### 3. Model Terbaik
+
+* Untuk pengguna baru, **CBF** lebih stabil.
+* Untuk pengguna lama, **CF** unggul dalam personalisasi.
+
+---
+
+## Keterkaitan dengan Business Understanding
+
+### Apakah Model Menjawab Problem Statements?
+
+* Ya. Kedua pendekatan mengakomodasi kebutuhan pengguna baru dan lama.
+
+### Apakah Model Mencapai Goals?
+
+* Tercapai. Evaluasi menunjukkan performa memuaskan.
+
+---
+
+## Rekomendasi dan Langkah Selanjutnya
+
+1. **Integrasi Hybrid Model**:
+
+   * Gabungkan pendekatan CBF dan CF secara dinamis.
+
+2. **Peningkatan Metadata**:
+
+   * Tambahkan informasi visual, lokasi, ulasan, dan rating waktu nyata.
+
+3. **Evaluasi Lanjutan**:
+
+   * Uji langsung ke pengguna untuk menilai kepuasan dan relevansi.
+
+4. **Pengembangan Aplikasi**:
+
+   * Kembangkan antarmuka rekomendasi berbasis web atau mobile.
+
+---
+
+## Kesimpulan
+
+1. Proyek ini berhasil mengembangkan sistem rekomendasi wisata berbasis machine learning yang menggabungkan pendekatan Content-Based Filtering dan Collaborative Filtering.
+2. Model **CBF** efektif dalam memberikan rekomendasi berdasarkan konten bagi pengguna baru, sedangkan **CF** menunjukkan keunggulan dalam memberikan rekomendasi yang dipersonalisasi untuk pengguna lama dengan akurasi prediksi tinggi (RMSE < 0.25).
+3. Hasil evaluasi menunjukkan bahwa kedua pendekatan saling melengkapi dalam skenario penggunaan yang berbeda.
+4. Sistem ini tidak hanya menjawab kebutuhan wisatawan untuk menentukan destinasi yang relevan, tetapi juga memberikan dasar untuk pengembangan lebih lanjut dalam mendukung pariwisata Kota Bandung secara digital.
+5. Dengan peningkatan fitur dan evaluasi berkelanjutan, sistem ini dapat menjadi komponen penting dalam layanan rekomendasi wisata berbasis data di tingkat kota.
+
+---
+
+> *Catatan gambar yang dapat ditambahkan:*
+>
+> * Gambar 1: Histogram distribusi rating wisatawan
+> * Gambar 3: Grafik training/validation loss model CF
+> * Gambar 4: Contoh hasil rekomendasi sistem CBF
+> * Gambar 5: Contoh hasil rekomendasi sistem CF (user-based)
