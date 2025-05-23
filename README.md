@@ -101,46 +101,52 @@ Kolom dengan jumlah missing tinggi seperti City pada tourism_with_id.csv dan Use
 
   *Gambar 1. Histogram distribusi rating wisatawan.*
 
+
 ---
 
 ## Data Preparation
 
-Berikut adalah tahapan lengkap dan detail dari proses persiapan data:
+Berikut adalah tahapan lengkap dalam proses **persiapan data** sebelum digunakan dalam model Content-Based Filtering (CBF) dan Collaborative Filtering (CF):
 
-| No                                                                                                                    | Langkah                  | Deskripsi                                                                                     |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------- |
-| 1                                                                                                                     | Data Cleaning            | Menghapus baris dengan missing value dari `user.csv` dan `tourism_with_id.csv`.               |
-| 2                                                                                                                     | Filter Bandung           | Hanya memilih tempat wisata di Bandung dengan filter pada `City` di `tourism_with_id.csv`.    |
-| 3                                                                                                                     | Merge Dataset            |                                                                                               |
-| Menggabungkan `tourism_rating` dengan `tourism_with_id` berdasarkan `Place_Id`, dan `user.csv` berdasarkan `User_Id`. |                          |                                                                                               |
-| 4                                                                                                                     | TF-IDF Vectorization     | Menggunakan `TfidfVectorizer()` pada kolom `Category` untuk membangun vektor fitur tempat.    |
-| 5                                                                                                                     | Cosine Similarity Matrix | Menggunakan `cosine_similarity()` dari hasil TF-IDF untuk menghitung kemiripan antar tempat.  |
-| 6                                                                                                                     | Input Data ke CF Model   | Menyiapkan `User_Id`, `Place_Id`, dan `Rating` untuk pelatihan model Collaborative Filtering. |
+| No | Langkah                  | Deskripsi                                                                                                                           |
+| -- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | Data Cleaning            | Menghapus baris dengan nilai kosong (missing value) dari `user.csv` dan `tourism_with_id.csv`.                                      |
+| 2  | Filter Lokasi: Bandung   | Memfilter hanya tempat wisata yang berada di Kota Bandung berdasarkan kolom `City` dari `tourism_with_id.csv`.                      |
+| 3  | Merge Dataset            | Menggabungkan: <br> - `tourism_rating.csv` dengan `tourism_with_id.csv` melalui `Place_Id` <br> - dan `user.csv` melalui `User_Id`. |
+| 4  | TF-IDF Vectorization     | Menggunakan `TfidfVectorizer()` pada kolom `Category` untuk menghasilkan vektor fitur tempat wisata.                                |
+| 5  | Cosine Similarity Matrix | Menghitung kemiripan antar tempat wisata menggunakan `cosine_similarity()` dari hasil TF-IDF.                                       |
+| 6  | Persiapan Data untuk CF  | Menyiapkan kolom `User_Id`, `Place_Id`, dan `Rating` sebagai input ke dalam model Collaborative Filtering.                          |
 
-### Cuplikan Kode Penting:
+---
+
+### Cuplikan Kode Penting
 
 ```python
-# Cleaning user dataset
+# 1. Cleaning user dataset
 user_df = user_df.dropna(subset=['Age', 'HomeTown'])
 
-# Filter hanya wisata Bandung
+# 2. Filter hanya wisata di Bandung
 place_df = place_df[place_df['City'].str.contains("Bandung", na=False)]
 
-# Merge rating dengan place dan user
+# 3. Merge rating dengan data tempat dan user
 df_rating = pd.merge(df_rating, place_df[['Place_Id']], how='right', on='Place_Id')
 df_user = pd.merge(user_df, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates().sort_values('User_Id')
 
-# TF-IDF untuk kategori tempat wisata
+# 4. TF-IDF untuk kategori tempat wisata
 tfidf_vectorizer = TfidfVectorizer()
 tfidf_matrix = tfidf_vectorizer.fit_transform(place_df['Category'])
+
+# 5. Hitung cosine similarity antar tempat wisata
 cosine_sim = cosine_similarity(tfidf_matrix)
 ```
 
-Penjelasan:
+---
 
-* **Merge** penting untuk memastikan hanya data relevan digunakan dalam training.
-* **TF-IDF + Cosine Similarity** membentuk dasar CBF.
-* **Data rating** langsung digunakan dalam training model CF.
+### Catatan Penting
+
+* Proses penggabungan (merge) dilakukan untuk memastikan hanya tempat wisata yang memiliki data lengkap dan relevan yang digunakan.
+* Proses TF-IDF dan cosine similarity digunakan untuk membangun model Content-Based Filtering.
+* Data rating yang sudah disiapkan akan digunakan sebagai input untuk model Collaborative Filtering.
 
 ---
 
