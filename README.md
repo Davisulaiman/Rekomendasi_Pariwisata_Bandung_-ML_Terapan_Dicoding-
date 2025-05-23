@@ -4,11 +4,13 @@
 
 ## Domain Proyek
 
-Bandung, ibu kota Provinsi Jawa Barat, dikenal sebagai salah satu destinasi wisata utama di Indonesia. Kota ini menawarkan ragam pengalaman mulai dari keindahan alam pegunungan, kekayaan budaya lokal, hingga tempat hiburan dan belanja modern yang menarik perhatian wisatawan dari dalam maupun luar negeri. Terkenalnya tempat-tempat seperti Lembang, Dago, Braga, dan Trans Studio menjadikan Bandung sebagai kota wisata dengan kunjungan tinggi setiap tahunnya.
+Bandung merupakan ibu kota Provinsi Jawa Barat yang dikenal luas sebagai salah satu destinasi wisata unggulan di Indonesia. Kota ini menawarkan berbagai pengalaman menarik, mulai dari panorama alam pegunungan, kekayaan budaya lokal, hingga tempat hiburan dan pusat perbelanjaan modern. Beberapa destinasi populer seperti Lembang, Dago, Braga, dan Trans Studio telah menjadikan Bandung sebagai kota dengan tingkat kunjungan wisata yang tinggi setiap tahunnya.
 
-Namun, banyaknya pilihan destinasi ini kerap membuat wisatawan kebingungan dalam menentukan tujuan wisata yang sesuai dengan preferensi pribadi. Hal ini menciptakan kebutuhan akan sistem rekomendasi cerdas yang dapat membantu menyaring informasi dan menyarankan tempat wisata yang paling relevan dan menarik bagi masing-masing individu.
+Namun demikian, banyaknya pilihan destinasi seringkali menimbulkan kebingungan bagi wisatawan dalam menentukan tujuan yang sesuai dengan preferensi pribadi. Kondisi ini menciptakan kebutuhan akan sistem rekomendasi cerdas yang mampu menyaring informasi dan memberikan saran tempat wisata yang relevan dan menarik bagi setiap individu.
 
-Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan utama: **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**. Pendekatan ini mengadaptasi strategi machine learning yang umum digunakan dalam berbagai bidang, termasuk sektor kesehatan seperti prediksi risiko kanker paru-paru. Dalam konteks wisata, sistem ini mampu memberikan rekomendasi berdasarkan kemiripan konten antar tempat wisata maupun dari pola perilaku pengguna lain yang serupa.
+Proyek ini mengembangkan sistem rekomendasi wisata dengan menggunakan dua pendekatan utama, yaitu Content-Based Filtering dan Collaborative Filtering. Kedua pendekatan ini merupakan strategi dalam machine learning yang banyak digunakan di berbagai bidang, termasuk sektor kesehatan seperti prediksi risiko kanker paru-paru. Dalam konteks wisata, sistem ini mampu memberikan rekomendasi berdasarkan kesamaan konten antar tempat wisata maupun dari pola perilaku pengguna lain yang serupa.
+
+Referensi ilmiah yang mendasari proyek ini antara lain:
 
 **Referensi Ilmiah:**
 
@@ -140,10 +142,14 @@ Rekomendasi untuk pengguna yang menyukai **Trans Studio Bandung**:
 Rekomendasi top-10 berdasarkan histori pengguna:
 
 Daftar rekomendasi untuk: User 152
+
 ============================================= 
 
+
 Tempat dengan rating wisata paling tinggi dari user
+
 ------------------------------------------------------------
+
 Kebun Binatang Bandung : Cagar Alam
 Taman Lalu Lintas Ade Irma Suryani Nasution : Taman Hiburan
 Museum Barli : Budaya
@@ -151,7 +157,9 @@ Monumen Perjuangan Rakyat Jawa Barat : Budaya
 Taman Begonia : Cagar Alam
 
 ------------------------------------------------------------
+
 Top 10 Rekomendasi Tempat Wisata untuk Anda
+
 ------------------------------------------------------------
 1. Upside Down World Bandung
     Kategori       : Taman Hiburan
@@ -203,7 +211,9 @@ Top 10 Rekomendasi Tempat Wisata untuk Anda
     Harga Tiket    : 10000
     Rating Wisata  : 4.4
 
+
 =============================================
+
 
 ![CF Output](assets/cf_output.png)
 
