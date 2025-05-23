@@ -153,39 +153,213 @@ cosine_sim = cosine_similarity(tfidf_matrix)
 
 ## Modeling
 
-### Content-Based Filtering (CBF)
+### 1. Content-Based Filtering (CBF)
 
-* TF-IDF digunakan untuk menghitung similarity antar tempat wisata.
-* Cosine similarity digunakan untuk menilai kemiripan:
+Content-Based Filtering (CBF) merekomendasikan item (dalam hal ini tempat wisata) berdasarkan kemiripan kontennya. Dalam proyek ini, pendekatan CBF dilakukan dengan:
 
-$\text{cosine}(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|}$
+* Menggunakan **TF-IDF** untuk mengubah data kategori tempat wisata menjadi representasi vektor numerik.
+* Menggunakan **Cosine Similarity** untuk menghitung kemiripan antar tempat wisata berdasarkan vektor hasil TF-IDF.
 
-* Rekomendasi berdasarkan tempat dengan deskripsi/kategori serupa.
+#### Rumus TF-IDF:
 
-### Collaborative Filtering (CF)
+$$
+\text{TF-IDF}(t, d) = \text{tf}(t, d) \times \log\left(\frac{N}{df(t)}\right)
+$$
 
-* Menggunakan `RecommenderNet` berbasis embedding.
-* Confidence scoring digunakan dari Margaris et al. (2025):
+Keterangan:
 
-  * Jumlah tetangga
-  * Rata-rata rating pengguna
-  * Rata-rata rating tempat
-* Evaluasi dengan RMSE:
+* $tf(t, d)$: frekuensi kemunculan term $t$ pada dokumen $d$
+* $df(t)$: jumlah dokumen yang mengandung term $t$
+* $N$: total jumlah dokumen
 
-$RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }$
+#### Rumus Cosine Similarity:
+
+$$
+\text{cosine}(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|}
+$$
+
+Keterangan:
+
+* $A, B$: vektor representasi dua tempat wisata
+* $A \cdot B$: dot product antara A dan B
+* $\|A\|$: panjang (norma) vektor A
+
+#### Cuplikan kode dari notebook:
+
+```python
+tfidf_vectorizer_model = TfidfVectorizer(max_features=5000)
+```
+
+**Penjelasan**:
+
+* Menginisialisasi objek `TfidfVectorizer` dengan maksimal 5000 fitur kata.
+* Objek ini digunakan untuk mengubah teks kategori tempat wisata menjadi matriks TF-IDF.
+
+```python
+cosine_sim = cosine_similarity(tfidf_matrix)
+```
+
+**Penjelasan**:
+
+* Menghitung skor kemiripan antar tempat wisata dari matriks TF-IDF.
+* Output-nya adalah matriks 2D yang menunjukkan tingkat kemiripan antara semua kombinasi tempat wisata.
 
 ---
 
+### 2. Collaborative Filtering (CF)
+
+Collaborative Filtering (CF) memanfaatkan data interaksi antara pengguna dan item untuk melakukan rekomendasi. Teknik ini tidak memperhatikan konten item, tapi mengandalkan kesamaan perilaku pengguna.
+
+Dalam proyek ini digunakan pendekatan berbasis deep learning dengan model **RecommenderNet** yang dibangun menggunakan TensorFlow.
+
+#### Struktur Model:
+
+```python
+class RecommenderNet(keras.Model):
+    def __init__(self, num_users, num_places, embedding_size, **kwargs):
+        super(RecommenderNet, self).__init__(**kwargs)
+        self.user_embedding = layers.Embedding(num_users, embedding_size, embeddings_initializer="he_normal")
+        self.user_bias = layers.Embedding(num_users, 1)
+        self.place_embedding = layers.Embedding(num_places, embedding_size, embeddings_initializer="he_normal")
+        self.place_bias = layers.Embedding(num_places, 1)
+
+    def call(self, inputs):
+        user_vector = self.user_embedding(inputs[:, 0])
+        user_bias = self.user_bias(inputs[:, 0])
+        place_vector = self.place_embedding(inputs[:, 1])
+        place_bias = self.place_bias(inputs[:, 1])
+
+        dot_user_place = tf.tensordot(user_vector, place_vector, 2)
+
+        return dot_user_place + user_bias + place_bias
+```
+
+#### Penjelasan kode:
+
+* `Embedding`: memetakan ID pengguna dan ID tempat menjadi representasi vektor berdimensi tetap (`embedding_size`).
+* `dot_user_place`: operasi dot product antara embedding pengguna dan tempat, menghasilkan prediksi rating.
+* `bias`: bias tambahan untuk memperhalus prediksi rating.
+
+#### Rumus estimasi rating dalam CF:
+
+$$
+\hat{r}_{u, i} = \mathbf{p}_u \cdot \mathbf{q}_i + b_u + b_i
+$$
+
+Keterangan:
+
+* $\mathbf{p}_u$: vektor embedding pengguna $u$
+* $\mathbf{q}_i$: vektor embedding tempat $i$
+* $b_u$: bias pengguna
+* $b_i$: bias tempat
+
+---
+
+### Confidence Scoring (Margaris et al., 2025)
+
+Confidence score digunakan untuk mengukur kepercayaan terhadap rekomendasi, berdasarkan:
+
+* Jumlah tetangga (pengguna yang memberikan rating)
+* Rata-rata rating pengguna
+* Rata-rata rating tempat
+
+Tujuan utama dari confidence scoring adalah memberikan bobot tambahan pada prediksi model agar lebih realistis dan relevan.
+
+---
+
+### Evaluasi Model
+
+Untuk mengevaluasi performa model, digunakan metrik **Root Mean Squared Error (RMSE)**:
+
+$$
+RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
+$$
+
+Keterangan:
+
+* $y_i$: rating aktual
+* $\hat{y}_i$: rating hasil prediksi
+* $n$: jumlah sampel
+
+---
+
+
 ## Evaluation
 
-### CBF
+### Evaluasi Content-Based Filtering (CBF)
 
-* Relevansi rekomendasi dilihat dari kemiripan konten.
-* Cocok untuk pengguna baru.
+Untuk metode CBF atau Content-Based Filtering, sistem memberikan rekomendasi berdasarkan kemiripan konten dari tempat wisata. Ini termasuk kategori dan deskripsi teks dari setiap tempat. Karena sistem ini tidak melibatkan data interaksi pengguna seperti rating secara eksplisit, maka evaluasi dilakukan secara kualitatif.
 
-### CF
+#### Evaluasi Kualitatif
 
-* RMSE < 0.25 dicapai setelah pelatihan.
+* Relevansi dievaluasi dengan melihat apakah tempat wisata yang direkomendasikan memiliki kategori atau deskripsi yang mirip.
+* Sistem dievaluasi dengan cara manual: apakah rekomendasinya logis jika dilihat dari sudut pandang wisatawan.
+* Misalnya, jika pengguna memilih Trans Studio Bandung, maka rekomendasi ideal adalah taman hiburan atau pusat hiburan serupa, bukan tempat yang sama sekali berbeda jenis.
+
+#### Kesimpulan CBF
+
+Metode ini sangat cocok untuk pengguna baru yang belum memiliki histori penilaian. Hal ini dikenal sebagai solusi untuk masalah cold start user.
+
+---
+
+### Evaluasi Collaborative Filtering (CF)
+
+Pada metode Collaborative Filtering, sistem menggunakan pendekatan berbasis neural network, yaitu model RecommenderNet. Model ini dibuat untuk mempelajari pola rating dari pengguna terhadap tempat wisata dan memprediksi rating pada tempat yang belum pernah dikunjungi oleh pengguna tersebut.
+
+#### Evaluasi Kuantitatif dengan RMSE
+
+Root Mean Squared Error atau RMSE adalah salah satu metode evaluasi paling umum untuk model prediksi. RMSE mengukur seberapa jauh nilai prediksi dari nilai sebenarnya. Semakin kecil nilai RMSE, maka semakin baik performa model.
+
+Rumus RMSE menghitung rata-rata dari kuadrat selisih antara rating sebenarnya dengan rating hasil prediksi. Setelah itu diambil akar dari hasil tersebut.
+
+Pada proyek ini, model dihentikan secara otomatis jika nilai RMSE pada data validasi sudah mencapai kurang dari nol koma dua lima. Ini dilakukan dengan callback atau fungsi penghentian otomatis.
+
+#### Callback Kode Evaluasi
+
+Berikut adalah kode program yang digunakan untuk menghentikan pelatihan model jika sudah mencapai target RMSE:
+
+```python
+class myCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs={}):
+        if logs.get('val_root_mean_squared_error') < 0.25:
+            print('Lapor! Metrik validasi sudah sesuai harapan')
+            self.model.stop_training = True
+```
+
+Penjelasan:
+
+* Baris pertama membuat kelas callback dari library TensorFlow.
+* Fungsi on\_epoch\_end dijalankan setiap kali model selesai satu kali pelatihan penuh atau epoch.
+* Jika nilai RMSE pada validasi kurang dari nol koma dua lima, pelatihan akan dihentikan dan model dianggap cukup baik.
+
+#### Visualisasi Grafik Evaluasi
+
+Model juga dievaluasi melalui grafik, yang menunjukkan nilai RMSE pada data pelatihan dan data validasi.
+
+```python
+plt.plot(history.history['root_mean_squared_error'])
+plt.plot(history.history['val_root_mean_squared_error'])
+plt.title('Model Evaluation')
+plt.ylabel('Root Mean Squared Error')
+plt.xlabel('Epoch')
+plt.ylim(ymin=0, ymax=0.4)
+plt.legend(['Train', 'Validation'], loc='center left')
+plt.show()
+```
+
+Penjelasan:
+
+* Dua garis digambar, masing-masing untuk data pelatihan dan data validasi.
+* Grafik ini membantu melihat apakah model mengalami overfitting atau tidak.
+* Jika kedua garis berada dalam tren menurun dan saling berdekatan, maka model dianggap stabil.
+
+---
+
+### Hasil Akhir Evaluasi
+
+Model Collaborative Filtering menunjukkan hasil yang baik dengan nilai RMSE di bawah nol koma dua lima. Artinya, model memiliki kemampuan prediksi yang baik dan dapat merekomendasikan tempat yang relevan dengan preferensi pengguna berdasarkan histori rating mereka.
+
+
 * Plot evaluasi:
 
   ![RMSE Loss Plot](assets/rmse_loss.png)
@@ -283,15 +457,9 @@ Rekomendasi top-5 berdasarkan histori pengguna:
 
    * **CBF** efektif untuk pengguna baru (cold-start), memberikan rekomendasi berdasarkan konten yang relevan.
    * **CF** unggul untuk pengguna lama dengan personalisasi tinggi dan akurasi prediksi yang baik (RMSE < 0.25).
+   
 3. Proyek ini telah berhasil menjawab permasalahan bisnis dalam memberikan rekomendasi wisata yang lebih akurat dan relevan di Kota Bandung.
 4. Sistem dapat ditingkatkan lebih lanjut dengan pendekatan hybrid, penguatan metadata, dan validasi langsung dari pengguna nyata.
 5. Rekomendasi ini berpotensi besar dalam mendukung pertumbuhan pariwisata lokal melalui sistem cerdas yang adaptif, kontekstual, dan berbasis data.
 
 ---
-
-> *Catatan gambar yang dapat ditambahkan:*
->
-> * Gambar 1: Histogram distribusi rating wisatawan
-> * Gambar 3: Grafik training/validation loss model CF
-> * Gambar 4: Contoh hasil rekomendasi sistem CBF
-> * Gambar 5: Contoh hasil rekomendasi sistem CF (user-based)
