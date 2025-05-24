@@ -100,8 +100,6 @@ Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan ut
 
 ## Data Preparation
 
-B
-
 Berikut adalah tahapan lengkap dalam proses **persiapan data** sebelum digunakan dalam model Content-Based Filtering (CBF) dan Collaborative Filtering (CF):
 
 | No | Langkah                  | Deskripsi                                                                                                                                |
