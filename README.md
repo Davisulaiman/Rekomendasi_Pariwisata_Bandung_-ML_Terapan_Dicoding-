@@ -43,57 +43,56 @@ Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan ut
 
 ## Data Understanding
 
-Dataset:
+### Dataset:
 
-tourism_with_id.csv: informasi tempat wisata
+* `tourism_with_id.csv`: informasi lengkap tempat wisata.
+* `tourism_rating.csv`: data interaksi rating pengguna.
+* `user.csv`: data demografi pengguna.
 
-tourism_rating.csv: data interaksi rating pengguna
+**Dataset diperoleh dari**: [Kaggle - Indonesia Tourism Destination Dataset](https://www.kaggle.com/datasets/aprabowo/indonesia-tourism-destination)
 
-user.csv: data demografi pengguna
+### Struktur Data:
 
-Dataset diperoleh dari Kaggle - Indonesia Tourism Destination Dataset
+#### Fitur pada `tourism_with_id.csv`:
 
-Struktur Data:
+* `Place ID`: ID tempat wisata
+* `Place Name`: Nama tempat wisata
+* `Category`: Kategori tempat (alam, budaya, dll)
+* `City`: Kategori Kota 
+* `Price Category`: Kategori harga
+* `Description`: Deskripsi singkat tempat wisata
+* `Time_Minutes`, `Unnamed: 11`, `Unnamed: 12`: kolom dihapus karena terlalu banyak missing
 
-Tempat wisata diklasifikasikan berdasarkan kategori.
+#### Fitur pada `tourism_rating.csv`:
 
-Rating berkisar dari 1–5.
+* `User ID`: ID pengguna
+* `Place ID`: ID tempat wisata yang dirating
+* `Rating`: Skor penilaian 1–5
 
-Pengguna berasal dari berbagai kota dan usia berbeda.
+#### Fitur pada `user.csv`:
 
-Analisis Missing Value:
+* `User ID`: ID pengguna
+* `Username`: Nama pengguna 
+* `Location`: Lokasi pengguna
+* `Age`: Usia pengguna
 
-tourism_with_id.csv:
+### Penanganan Missing:
 
-Unnamed: 0: 0 missing
+* Kolom dengan missing value tinggi seperti  `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12` dihapus.
+* Fokus fitur pada: `Place Name`, `Category`, `Description`, dan rating pengguna.
+* Data numerik dan kategorikal penting dibersihkan untuk proses modeling.
 
-Place_Name: 0 missing
+### Insight Awal:
 
-Category: 0 missing
+* Banyaknya tempat wisata tanpa kota menunjukkan kurangnya metadata geografis.
+* Distribusi rating relatif merata di seluruh tempat.
+* Umur pengguna memiliki distribusi dominan di usia 20–40 tahun.
 
-City: > 60% missing
+### Visualisasi:
 
-Description: 0 missing
+![Distribusi Rating](assets/rating_distribution.png)
 
-tourism_rating.csv:
-
-User_ID: 0 missing
-
-Place_ID: 0 missing
-
-Rating: 0 missing
-
-user.csv:
-
-User_ID: 0 missing
-
-Username: hampir semua missing (tidak digunakan dalam modeling)
-
-Location: sebagian besar tersedia, namun terdapat sekitar 15% missing
-
-Age: ~10% missing
-
-Kolom dengan jumlah missing tinggi seperti City pada tourism_with_id.csv dan Username pada user.csv diabaikan dalam proses modeling. Informasi yang lengkap difokuskan pada fitur penting seperti deskripsi tempat, kategori, lokasi, dan interaksi rating.
+*Gambar 1. Histogram distribusi rating wisatawan.*
 
 ### Visualisasi:
 
