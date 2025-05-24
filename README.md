@@ -93,7 +93,7 @@ Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan ut
 
 * ![Distribusi Rating](assets/rating_distribution.png)
 
-  *Gambar 1. Histogram distribusi rating wisatawan.*
+*Gambar 1. Histogram distribusi rating wisatawan.*
 
 
 ---
