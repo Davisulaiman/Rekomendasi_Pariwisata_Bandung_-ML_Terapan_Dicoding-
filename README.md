@@ -206,7 +206,6 @@ Membagi data rating untuk pelatihan dan pengujian model Collaborative Filtering.
 
 * Normalisasi dilakukan karena banyak model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (misal 0–1).
 * Encoding ID sangat penting untuk CF karena model mengandalkan representasi numerik pengguna dan item.
-* Proses TF-IDF **tidak dibahas sebagai model** karena akan dijelaskan di bagian *Modelling*.
 
 ---
 
