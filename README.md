@@ -556,25 +556,51 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 * Untuk **pengguna baru** atau **cold start**, **CBF** lebih stabil dengan precision 100%.
 * Untuk **pengguna dengan histori**, **CF** unggul dalam memberikan pengalaman personal yang beragam.
 
+Berikut adalah versi **perbaikan dan penyempurnaan** dari bagian **“Keterkaitan dengan Business Understanding”**, agar benar-benar **terkait erat dan logis** dengan bagian *Business Understanding* di atas:
+
 ---
 
 ## Keterkaitan dengan Business Understanding
 
-### Apakah Model Menjawab Problem Statements?
+### Apakah Model Menjawab Problem Statement?
 
-Ya. Kedua pendekatan berhasil mengakomodasi kebutuhan:
-* **CBF** mengatasi masalah cold start dengan memberikan rekomendasi yang konsisten berdasarkan preferensi kategori
-* **CF** memberikan rekomendasi personal yang beragam untuk pengguna dengan riwayat interaksi
+Ya, kedua model yang dikembangkan secara langsung menjawab permasalahan bisnis yang telah diidentifikasi:
+
+* **Masalah utama:** Wisatawan mengalami kesulitan dalam menemukan destinasi yang sesuai dengan minat mereka, baik karena kurangnya personalisasi maupun banyaknya pilihan yang tersedia.
+* **Solusi yang diberikan:** Model rekomendasi berbasis **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)** membantu mempersonalisasi hasil rekomendasi sesuai karakteristik pengguna.
+
+Secara khusus:
+
+* **CBF** sangat efektif untuk **pengguna baru (cold start user)**, karena sistem tetap dapat memberikan rekomendasi yang relevan berdasarkan kategori konten tempat wisata tanpa memerlukan data historis.
+* **CF** unggul dalam memberikan **rekomendasi yang dipersonalisasi** berdasarkan riwayat interaksi pengguna, sehingga sangat cocok untuk pengguna yang telah aktif memberikan rating.
+
+Dengan demikian, sistem ini berhasil mengurangi kebingungan pengguna dalam memilih destinasi, serta **meningkatkan potensi kunjungan ke tempat wisata yang relevan**, sejalan dengan tujuan peningkatan pengalaman pengguna dan dampak ekonomi lokal.
+
+---
 
 ### Apakah Model Mencapai Goals?
 
-Tercapai dengan excellent performance:
-* **CBF**: Precision@10 = 100% (target: >80%)
-* **CF**: RMSE < 0.35 (target: <0.35)
-* **Diversity**: CF mencakup 4 kategori berbeda dalam top-10
-* **Quality**: Rata-rata rating rekomendasi 4.34/5.0
+Ya, tujuan proyek tercapai dengan performa yang sangat baik, ditunjukkan oleh hasil evaluasi sebagai berikut:
+
+| Tujuan Evaluasi                       | Hasil Model                    | Target             | Status   |
+| ------------------------------------- | ------------------------------ | ------------------ | -------- |
+| Relevansi rekomendasi (CBF)           | Precision\@10 = 100%           | > 80%              | Tercapai |
+| Akurasi prediksi rating (CF)          | RMSE validasi = 0.344          | < 0.35             | Tercapai |
+| Personalisasi dan variasi rekomendasi | 4 kategori wisata berbeda (CF) | Diversifikasi item | Tercapai |
+| Kualitas konten rekomendasi           | Rata-rata rating 4.34/5.0      | ≥ 4.0              | Tercapai |
+
+CBF berhasil memberikan rekomendasi yang **konsisten dan akurat** berdasarkan kategori, sementara CF memberikan rekomendasi **yang lebih bervariasi dan personal**, menjawab kebutuhan pengguna dengan tingkat kepuasan yang tinggi secara prediktif.
 
 ---
+
+### Implikasi Bisnis
+
+* **Untuk wisatawan:** Sistem rekomendasi mempermudah proses pemilihan tempat wisata yang sesuai, menghemat waktu dan meningkatkan kepuasan perjalanan.
+* **Untuk pelaku usaha pariwisata:** Sistem ini mendorong visibilitas destinasi secara lebih adil dan personal, yang berpotensi meningkatkan kunjungan dan pendapatan.
+* **Untuk pemerintah/organisasi pariwisata:** Rekomendasi yang relevan dapat dimanfaatkan untuk menyusun strategi promosi wisata yang lebih terarah dan berbasis data.
+
+---
+
 
 ## Rekomendasi dan Langkah Selanjutnya
 
