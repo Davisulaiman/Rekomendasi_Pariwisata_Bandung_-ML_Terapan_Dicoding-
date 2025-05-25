@@ -22,24 +22,26 @@ Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan ut
 
 ## Business Understanding
 
-### Problem Statements
+### Problem Statement
 
-* Bagaimana memberikan rekomendasi wisata yang relevan bagi pengguna baru dan lama?
-* Bagaimana meningkatkan kualitas personalisasi dalam sistem rekomendasi?
+Bandung merupakan salah satu kota wisata utama di Indonesia dengan ratusan destinasi yang tersebar di berbagai kategori. Namun, wisatawan—baik yang baru pertama kali berkunjung maupun yang sudah pernah datang—sering mengalami kesulitan dalam memilih tempat wisata yang sesuai dengan preferensi mereka. Tidak adanya sistem rekomendasi yang dipersonalisasi dapat menyebabkan pengalaman wisata yang kurang optimal dan potensi hilangnya peluang ekonomi bagi pelaku wisata lokal.
 
 ### Goals
 
-* Membangun dua model rekomendasi (CBF dan CF) untuk tempat wisata di Bandung.
-* Mengevaluasi performa model berdasarkan hasil top-N rekomendasi dan nilai RMSE.
+Proyek ini bertujuan untuk:
 
-### Solution Approach
+* Mengembangkan sistem rekomendasi wisata yang dapat **meningkatkan relevansi dan personalisasi** destinasi yang ditampilkan kepada pengguna.
+* Membangun dan membandingkan **dua pendekatan model rekomendasi**: Content-Based Filtering (CBF) dan Collaborative Filtering (CF).
+* Mengukur performa model dengan metrik evaluasi seperti **top-N recommendation accuracy (Precision\@K)** dan **Root Mean Square Error (RMSE)** untuk memastikan kualitas prediksi dan relevansi hasil.
 
-* **CBF:** Menggunakan cosine similarity antar TF-IDF deskripsi/kategori wisata.
-* **CF:** Menggunakan deep learning embedding dan matrix factorization, serta confidence factor (jumlah tetangga, rerata rating pengguna dan tempat).
+### Solution Statement (Opsional)
+
+Solusi yang diusulkan mencakup dua pendekatan:
+
+* **Content-Based Filtering (CBF):** Memanfaatkan kemiripan antara deskripsi dan kategori tempat wisata menggunakan teknik TF-IDF dan cosine similarity.
+* **Collaborative Filtering (CF):** Menggunakan model matrix factorization berbasis embedding yang dilatih dengan data interaksi pengguna dan tempat, serta mempertimbangkan faktor kepercayaan seperti jumlah tetangga, rata-rata rating pengguna dan destinasi.
 
 ---
-
-
 
 ## Data Understanding
 
