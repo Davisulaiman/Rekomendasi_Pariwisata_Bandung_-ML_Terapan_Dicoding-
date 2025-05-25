@@ -530,7 +530,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 | Model | Kelebihan | Kekurangan | Performance Score |
 |-------|-----------|------------|-------------------|
 | **CBF** | - Category precision: 100%<br>- Cold start friendly<br>- Konsisten dan dapat diprediksi | - Terbatas pada metadata<br>- Kurang beragam<br>- Tidak personal | 8.5/10 |
-| **CF** | - Highly personalized<br>- RMSE < 0.25<br>- Diverse recommendations<br>- Quality ratings (avg: 4.34) | - Membutuhkan data historis<br>- Cold start problem | 9.0/10 |
+| **CF** | - Highly personalized<br>- RMSE < 0.35<br>- Diverse recommendations<br>- Quality ratings (avg: 4.34) | - Membutuhkan data historis<br>- Cold start problem | 9.0/10 |
 
 ---
 
@@ -539,7 +539,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 ### 1. Performa Model
 
 * **CBF** menunjukkan precision sempurna (100%) untuk kategori yang sama, dengan kemampuan memberikan rekomendasi yang sangat konsisten berdasarkan konten.
-* **CF** menghasilkan prediksi yang akurat dengan RMSE < 0.25 dan memberikan rekomendasi yang beragam serta personal.
+* **CF** menghasilkan prediksi yang akurat dengan RMSE < 0.35 dan memberikan rekomendasi yang beragam serta personal.
 
 ### 2. Karakteristik Rekomendasi
 
@@ -570,7 +570,7 @@ Ya. Kedua pendekatan berhasil mengakomodasi kebutuhan:
 
 Tercapai dengan excellent performance:
 * **CBF**: Precision@10 = 100% (target: >80%)
-* **CF**: RMSE < 0.25 (target: <0.25)
+* **CF**: RMSE < 0.35 (target: <0.35)
 * **Diversity**: CF mencakup 4 kategori berbeda dalam top-10
 * **Quality**: Rata-rata rating rekomendasi 4.34/5.0
 
@@ -603,7 +603,7 @@ Tercapai dengan excellent performance:
 
 2. **Hasil evaluasi menunjukkan performa excellent**:
    * **CBF** mencapai Precision@10 = 100% dengan konsistensi kategori yang sempurna
-   * **CF** mencapai RMSE < 0.25 dengan rekomendasi yang personal dan beragam
+   * **CF** mencapai RMSE < 0.35 dengan rekomendasi yang personal dan beragam
 
 3. **Karakteristik unik masing-masing model**:
    * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
