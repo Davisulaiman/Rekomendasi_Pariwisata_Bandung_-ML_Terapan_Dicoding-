@@ -410,14 +410,6 @@ $$
 \text{Precision@K} = \frac{\text{Jumlah item relevan dalam top-K}}{\text{K}}
 $$
 
-##### 2. Recall@K
-
-Recall@K mengukur proporsi item relevan yang berhasil ditemukan dalam K rekomendasi teratas.
-
-$$
-\text{Recall@K} = \frac{\text{Jumlah item relevan dalam top-K}}{\text{Total item relevan}}
-$$
-
 #### Implementasi Evaluasi CBF
 
 ```python
