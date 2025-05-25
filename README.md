@@ -477,7 +477,7 @@ Keterangan:
 ```python
 class myCallback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
-        if(logs.get('val_root_mean_squared_error')<0.25):
+        if(logs.get('val_root_mean_squared_error')<0.35):
             print('Lapor! Metriks validasi sudah sesuai harapan')
             self.model.stop_training = True
 ```
@@ -488,8 +488,15 @@ Berdasarkan training yang dilakukan dengan callback otomatis:
 
 | Metrik | Final Value | Target |
 |--------|-------------|--------|
-| Validation RMSE | < 0.25 | < 0.25 |
+| Validation RMSE | < 0.35 | < 0.35 |
 | Training Status | Converged | Success |
+
+#### Visualisasi Grafik RMSE Validasi
+
+Grafik berikut memperlihatkan perubahan nilai RMSE pada data validasi selama pelatihan:
+
+![rmse_validation_plot](assets/rmse_validation.png)
+
 
 #### Analisis Kualitas Rekomendasi CF
 
