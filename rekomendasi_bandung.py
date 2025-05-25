@@ -237,6 +237,23 @@ df_place[df_place.Place_Name.eq(place_name)]
 
 destination_recommendations(place_name=place_name)
 
+def evaluate_cbf_precision_at_k(place_name, k=10):
+    # Mendapatkan kategori tempat input
+    input_category = df_place[df_place['Place_Name'] == place_name]['Category'].iloc[0]
+
+    # Mendapatkan rekomendasi
+    recommendations = destination_recommendations(place_name, k=k)
+
+    # Menghitung item yang relevan (kategori sama)
+    relevant_count = sum(1 for cat in recommendations['Category'] if cat == input_category)
+
+    precision = relevant_count / k
+    return precision, relevant_count
+
+evaluate_cbf_precision_at_k("Trans Studio Bandung", k=5)
+
+evaluate_cbf_precision_at_k("Trans Studio Bandung", k=10)
+
 """### Model Collaborative
 
 #### 1. Membuat Salinan Data rating
@@ -372,7 +389,7 @@ model.compile(
 
 class myCallback(tf.keras.callbacks.Callback):
   def on_epoch_end(self, epoch, logs={}):
-    if(logs.get('val_root_mean_squared_error')<0.25):
+    if(logs.get('val_root_mean_squared_error')<0.35):
       print('Lapor! Metriks validasi sudah sesuai harapan')
       self.model.stop_training = True
 

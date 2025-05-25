@@ -275,6 +275,13 @@ Rekomendasi untuk pengguna yang menyukai **Trans Studio Bandung**:
 | 9 | Batununggal Indah Club | Taman Hiburan |
 | 10 | Kampung Batu Malakasari | Taman Hiburan |
 
+
+#### Visualisasi Gambar Content Based Filtering
+
+Gambar tersebut menjelaskan untuk output dari Content Based Filtering
+
+![Content Based](assets/cbf_output.png)
+
 ---
 
 ### 2. Collaborative Filtering (CF)
@@ -367,30 +374,48 @@ Keterangan:
 * $\sigma$: fungsi sigmoid untuk normalisasi output
 
 #### Hasil Rekomendasi CF
+ 
+ **Rekomendasi Sistem untuk User 230**
 
-**Tempat dengan rating tertinggi dari User 164:**
+ **Tempat dengan Rating Tertinggi dari User 230:**
 
-| Place Name | Category |
-|------------|----------|
-| Tebing Karaton | Cagar Alam |
-| The Great Asia Africa | Taman Hiburan |
-| Upside Down World Bandung | Taman Hiburan |
-| Gereja Katedral Santo Petrus Bandung | Tempat Ibadah |
+| Place Name                 | Category      |
+| -------------------------- | ------------- |
+| Trans Studio Bandung       | Taman Hiburan |
+| Gunung Papandayan          | Cagar Alam    |
+| Monumen Bandung Lautan Api | Budaya        |
+| Batununggal Indah Club     | Taman Hiburan |
+| Sunrise Point Cukul        | Cagar Alam    |
 
-**Top-10 Rekomendasi untuk User 164:**
+ **Top-10 Rekomendasi untuk User 230:**
 
-| Rank | Place Name | Category | Price | Rating |
-|------|------------|----------|-------|--------|
-| 1 | Dago Dreampark | Taman Hiburan | 40000 | 4.2 |
-| 2 | Curug Tilu Leuwi Opat | Cagar Alam | 10000 | 4.4 |
-| 3 | Taman Lansia | Taman Hiburan | 0 | 4.4 |
-| 4 | Selasar Sunaryo Art Space | Taman Hiburan | 25000 | 4.6 |
-| 5 | Teras Cikapundung BBWS | Taman Hiburan | 0 | 4.3 |
-| 6 | Museum Pos Indonesia | Budaya | 0 | 4.5 |
-| 7 | Curug Batu Templek | Cagar Alam | 5000 | 4.1 |
-| 8 | Taman Budaya Jawa Barat | Budaya | 0 | 4.3 |
-| 9 | Masjid Agung Trans Studio Bandung | Tempat Ibadah | 0 | 4.8 |
-| 10 | Bukit Jamur | Cagar Alam | 0 | 4.2 |
+| Rank | Place Name                        | Category      | Price | Rating |
+| ---- | --------------------------------- | ------------- | ----- | ------ |
+| 1    | Dago Dreampark                    | Taman Hiburan | 40000 | 4.2    |
+| 2    | Alun-Alun Kota Bandung            | Taman Hiburan | 0     | 4.6    |
+| 3    | Stone Garden Citatah              | Taman Hiburan | 30000 | 4.4    |
+| 4    | Kampung Korea Bandung             | Budaya        | 15000 | 4.1    |
+| 5    | Selasar Sunaryo Art Space         | Taman Hiburan | 25000 | 4.6    |
+| 6    | Teras Cikapundung BBWS            | Taman Hiburan | 0     | 4.3    |
+| 7    | Masjid Agung Trans Studio Bandung | Tempat Ibadah | 0     | 4.8    |
+| 8    | Museum Nike Ardilla               | Budaya        | 0     | 4.6    |
+| 9    | Sanghyang Heuleut                 | Cagar Alam    | 10000 | 4.4    |
+| 10   | Situ Patenggang                   | Cagar Alam    | 20000 | 4.5    |
+
+---
+
+ **Analisis Singkat**
+
+* **Kategori terbanyak dalam rekomendasi:** Taman Hiburan (5 dari 10)
+* **Diversity kategori:** Taman Hiburan, Budaya, Tempat Ibadah, dan Cagar Alam
+* **Rata-rata rating rekomendasi:** 4.45
+* **Rentang harga tiket:** Gratis hingga 40.000, menunjukkan sistem memberikan pilihan dari semua segmen
+
+#### Visualisasi Gambar Collaborative Filtering
+
+Gambar tersebut menjelaskan untuk output dari Collaborative Filtering
+
+![Content Based](assets/cbf_output2.png)
 
 ---
 
@@ -451,6 +476,13 @@ Analisis lebih lanjut terhadap rekomendasi Trans Studio Bandung:
 | Category Consistency | 10/10 | Semua rekomendasi kategori Taman Hiburan |
 | Diversity | 8/10 | Beragam jenis taman hiburan |
 | Relevance | 9/10 | Sangat relevan untuk pengguna yang menyukai hiburan |
+
+#### Evaluasi Precision
+
+Grafik berikut memperlihatkan perubahan nilai RMSE pada data validasi selama pelatihan:
+
+![Precision](assets/Evaluasi_Precision.png)
+
 
 ---
 
