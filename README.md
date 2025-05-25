@@ -108,31 +108,32 @@ Solusi yang diusulkan mencakup dua pendekatan:
 
 ---
 
+
 ## Data Preparation
 
-Berikut adalah tahapan lengkap dalam proses **persiapan data** sebelum digunakan dalam model Content-Based Filtering (CBF) dan Collaborative Filtering (CF):
+Berikut adalah seluruh tahapan yang dilakukan dalam proses persiapan data sebelum digunakan untuk **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**:
 
-| No | Langkah                  | Deskripsi                                                                                                                                |
-| -- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| 1  | Data Cleaning            | Menghapus kolom `Time_Minutes`, `Unnamed: 11`, `Unnamed: 12` yang banyak kosong pada  |
-| 2  | Filter Lokasi: Bandung   | Memfilter hanya tempat wisata yang berada di Kota Bandung berdasarkan kolom `City` dari `tourism_with_id.csv`.                           |
-| 3  | Merge Dataset            | Menggabungkan: <br> - `tourism_rating.csv` dengan `tourism_with_id.csv` melalui `Place_Id` <br> - dan `user.csv` melalui `User_Id`.      |
-| 4  | TF-IDF Vectorization     | Menggunakan `TfidfVectorizer()` pada kolom `Category` untuk menghasilkan vektor fitur tempat wisata.                                     |
-| 5  | Cosine Similarity Matrix | Menghitung kemiripan antar tempat wisata menggunakan `cosine_similarity()` dari hasil TF-IDF.                                            |
-| 6  | Persiapan Data untuk CF  | Menyiapkan kolom `User_Id`, `Place_Id`, dan `Rating` sebagai input ke dalam model Collaborative Filtering.                               |
+| No | Tahapan                | Deskripsi                                                                                                                       |
+| -- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1  | Data Cleaning          | Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12`. |
+| 2  | Filter Lokasi: Bandung | Memfilter data agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom `City`.                     |
+| 3  | Merge Dataset          | Menggabungkan data rating dengan data tempat wisata (`Place_Id`) dan pengguna (`User_Id`) agar hanya mencakup data yang valid.  |
+| 4  | Encoding ID            | Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik agar dapat digunakan dalam model berbasis matriks (CF).  |
+| 5  | Normalisasi Rating     | Rating dinormalisasi ke skala 0–1 untuk meningkatkan kestabilan pelatihan pada model deep learning.                             |
+| 6  | TF-IDF Vectorization   | Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata.                             |
+| 7  | Split Data untuk CF    | Membagi data rating menjadi data latih dan data uji menggunakan `train_test_split`.                                             |
 
 ---
 
-### Kode dan Penjelasan Kode
+### Penjelasan Kode
 
 #### 1. Data Cleaning
 
 ```python
 place_df.drop(['Time_Minutes', 'Unnamed: 11', 'Unnamed: 12'], axis=1, inplace=True)
-user_df = user_df.dropna(subset=['Age', 'HomeTown'])
 ```
 
-Baris ini menghapus kolom dengan banyak missing value dari `place_df`, serta menghapus baris yang memiliki NA pada kolom penting di `user_df`.
+Menghapus kolom yang tidak informatif atau memiliki missing value terlalu banyak.
 
 #### 2. Filter Lokasi Bandung
 
@@ -140,18 +141,43 @@ Baris ini menghapus kolom dengan banyak missing value dari `place_df`, serta men
 place_df = place_df[place_df['City'].str.contains("Bandung", na=False)]
 ```
 
-Memfilter data agar hanya menyisakan tempat wisata yang berada di Bandung.
+Hanya mempertahankan baris data dengan `City` mengandung "Bandung".
 
 #### 3. Merge Dataset
 
 ```python
 df_rating = pd.merge(df_rating, place_df[['Place_Id']], how='right', on='Place_Id')
-df_user = pd.merge(user_df, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates().sort_values('User_Id')
+df_user = pd.merge(user_df, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates()
 ```
 
-Menggabungkan data rating dengan data tempat wisata dan data user untuk menyusun data lengkap yang siap dianalisis.
+Menggabungkan rating dengan data tempat wisata dan user untuk menyaring data yang relevan.
 
-#### 4. TF-IDF Vectorization
+#### 4. Encoding ID
+
+```python
+from sklearn.preprocessing import LabelEncoder
+
+user_encoder = LabelEncoder()
+place_encoder = LabelEncoder()
+
+df_rating['user_encoded'] = user_encoder.fit_transform(df_rating['User_Id'])
+df_rating['place_encoded'] = place_encoder.fit_transform(df_rating['Place_Id'])
+```
+
+Melakukan encoding `User_Id` dan `Place_Id` ke bentuk numerik.
+
+#### 5. Normalisasi Rating
+
+```python
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+df_rating['rating_normalized'] = scaler.fit_transform(df_rating[['Place_Ratings']])
+```
+
+Menormalkan rating dari rentang 1–5 menjadi 0–1.
+
+#### 6. TF-IDF Vectorization
 
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -160,40 +186,29 @@ tfidf_vectorizer = TfidfVectorizer()
 tfidf_matrix = tfidf_vectorizer.fit_transform(place_df['Category'])
 ```
 
-Mengubah data kategori tempat wisata ke bentuk numerik vektor menggunakan TF-IDF.
+Mengubah data kategori menjadi representasi numerik berbasis teks.
 
-#### 5. Cosine Similarity
-
-```python
-from sklearn.metrics.pairwise import cosine_similarity
-
-cosine_sim = cosine_similarity(tfidf_matrix)
-```
-
-Mengukur kesamaan antar tempat wisata berdasarkan hasil TF-IDF menggunakan cosine similarity.
-
-#### 6. Split untuk CF
+#### 7. Split Data untuk CF
 
 ```python
 from sklearn.model_selection import train_test_split
 
-X = df_rating[['User_Id', 'Place_Id']].values
-y = df_rating['Rating'].values
+X = df_rating[['user_encoded', 'place_encoded']].values
+y = df_rating['rating_normalized'].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 ```
 
-Membagi data rating menjadi data pelatihan dan data uji untuk digunakan dalam model Collaborative Filtering.
+Membagi data rating untuk pelatihan dan pengujian model Collaborative Filtering.
 
 ---
 
-### Catatan Penting
+### Catatan Penting:
 
-* Proses penggabungan (merge) dilakukan untuk memastikan hanya tempat wisata yang memiliki data lengkap dan relevan yang digunakan.
-* Proses TF-IDF dan cosine similarity digunakan untuk membangun model Content-Based Filtering.
-* Data rating yang sudah disiapkan akan digunakan sebagai input untuk model Collaborative Filtering.
+* Normalisasi dilakukan karena banyak model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (misal 0–1).
+* Encoding ID sangat penting untuk CF karena model mengandalkan representasi numerik pengguna dan item.
+* Proses TF-IDF **tidak dibahas sebagai model** karena akan dijelaskan di bagian *Modelling*.
 
 ---
-
 
 ## Modeling
 
