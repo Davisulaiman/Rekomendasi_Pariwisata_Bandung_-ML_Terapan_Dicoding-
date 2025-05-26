@@ -6,11 +6,16 @@
 
 Bandung, ibu kota Provinsi Jawa Barat, dikenal sebagai salah satu kota wisata favorit di Indonesia. Dikenal dengan julukan “Paris van Java”, Bandung memiliki sejarah panjang sebagai kota tujuan wisata sejak zaman kolonial Belanda. Kombinasi antara iklim sejuk pegunungan, keragaman budaya Sunda, serta kemajuan urban menjadikannya tempat yang unik dan menarik. Berdasarkan data dari Dinas Kebudayaan dan Pariwisata Kota Bandung, kota ini menerima lebih dari 7 juta kunjungan wisatawan domestik dan internasional setiap tahunnya.
 
-Bandung menawarkan beragam destinasi: dari wisata alam seperti Tebing Keraton dan Tangkuban Perahu, wisata edukasi dan sejarah seperti Museum Geologi dan Gedung Sate, hingga taman hiburan dan tempat belanja modern seperti Trans Studio Bandung dan kawasan Dago.
+Bandung menawarkan beragam destinasi: dari wisata alam seperti Tebing Keraton dan Tangkuban Perahu, wisata edukasi dan sejarah seperti Museum Geologi dan Gedung Sate, hingga taman hiburan dan tempat belanja modern seperti Trans Studio Bandung dan kawasan Dago. Selain itu, wisata kuliner juga menjadi daya tarik yang signifikan, seperti yang dijelaskan dalam penelitian Nurdiansyah et al. (2023), yang menyoroti potensi kawasan kuliner seperti Sudirman Street sebagai pusat atraksi wisata berbasis makanan lokal yang berkontribusi terhadap ekonomi kreatif dan pengalaman wisata yang unik.
 
-Namun, dengan lebih dari 400 lokasi wisata yang tersebar di seluruh kota dan sekitarnya, wisatawan sering mengalami kesulitan dalam memilih tujuan yang paling relevan dengan minat dan kebutuhannya. Oleh karena itu, pengembangan sistem rekomendasi wisata yang cerdas dan adaptif sangat penting.
+Namun, dengan lebih dari 400 lokasi wisata yang tersebar di seluruh kota dan sekitarnya, wisatawan sering mengalami kesulitan dalam memilih tujuan yang paling relevan dengan minat dan kebutuhannya. Tantangan ini diperkuat oleh keterbatasan informasi personal yang disediakan oleh brosur statis atau panduan umum. Maka dari itu, pengembangan sistem rekomendasi wisata yang cerdas dan adaptif sangat penting.
 
-Proyek ini mengembangkan sistem rekomendasi wisata menggunakan dua pendekatan utama: Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Pendekatan ini mirip dengan bagaimana Machine Learning digunakan dalam bidang lain seperti prediksi risiko medis, namun disesuaikan untuk kebutuhan pariwisata. Rekomendasi diberikan berdasarkan kemiripan konten antar tempat wisata dan pola perilaku pengguna lain yang serupa, dengan tujuan meningkatkan pengalaman pengguna dan efisiensi dalam menentukan destinasi.
+Proyek ini mengembangkan sistem rekomendasi wisata berbasis teknologi kecerdasan buatan (AI) menggunakan dua pendekatan utama: Content-Based Filtering (CBF) dan Collaborative Filtering (CF). Berdasarkan penelitian Chalkiadakis et al. (2023), pendekatan hybrid pada sistem rekomendasi wisata terbukti efektif dalam meningkatkan akurasi personalisasi serta mengurangi permasalahan *cold-start* pada pengguna baru. Dengan menggabungkan metode Bayesian dan teknik kesamaan semantik seperti Weighted Extended Jaccard Similarity (WEJS), sistem mampu menangkap preferensi pengguna dengan akurat bahkan dalam kunjungan jangka pendek.
+
+Selain itu, untuk meningkatkan kualitas prediksi dari model Collaborative Filtering, penelitian oleh Margaris et al. (2025) menyarankan penerapan *prediction confidence factors* yang mempertimbangkan jumlah *nearest neighbors* (NN), rata-rata rating pengguna, dan rata-rata rating item. Dengan pendekatan ini, sistem dapat memberikan rekomendasi yang lebih dapat diandalkan dan mengurangi margin kesalahan prediksi.
+
+Dengan memanfaatkan metode-metode ini, proyek ini bertujuan membangun sistem rekomendasi wisata di Kota Bandung yang tidak hanya cerdas dan akurat, namun juga memperhatikan konteks lokal, tren wisata berbasis pengalaman, serta keberlanjutan industri pariwisata kreatif. Sistem ini diharapkan mampu meningkatkan pengalaman pengguna, mempercepat proses pengambilan keputusan wisata, dan mendorong pemerataan kunjungan wisata ke berbagai titik potensi di kota Bandung.
+
 
 **Referensi Ilmiah:**
 
@@ -132,78 +137,94 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 ---
 
-
 # Data Preparation
 
-Tahap persiapan data merupakan langkah krusial dalam membangun sistem rekomendasi yang efektif. Berikut adalah tahapan-tahapan yang dilakukan dalam proses data preparation sebelum data digunakan untuk pemodelan **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**.
+Tahap persiapan data merupakan langkah krusial dalam membangun sistem rekomendasi yang efektif. Berikut adalah tahapan-tahapan yang dilakukan dalam proses data preparation sebelum data digunakan untuk pemodelan Content-Based Filtering (CBF) dan Collaborative Filtering (CF).
 
-## Tahapan Data Preparation
+## Ringkasan Tahapan Data Preparation
+
+| No | Tahapan | Deskripsi | Alasan Utama |
+|----|---------|-----------|--------------|
+| 1 | Data Cleaning | Menghapus kolom yang tidak relevan | Meningkatkan kualitas data dan efisiensi komputasi |
+| 2 | Filter Lokasi Bandung | Memfilter data berdasarkan lokasi | Konsistensi geografis dan relevansi rekomendasi |
+| 3 | Merge Dataset | Menggabungkan data rating, tempat, dan user | Memastikan konsistensi referensial antar tabel |
+| 4 | TF-IDF Vectorization | Mengubah kategori menjadi representasi numerik | Persiapan fitur untuk Content-Based Filtering |
+| 5 | Encoding ID Manual | Konversi ID ke indeks numerik | Kompatibilitas dengan model machine learning |
+| 6 | Normalisasi Rating Manual | Standarisasi skala rating ke 0-1 | Stabilitas training model neural network |
+| 7 | Random Shuffle Data | Mengacak urutan data | Eliminasi bias dan distribusi data yang merata |
+| 8 | Split Data Manual | Membagi data training dan validasi | Evaluasi model yang objektif |
+
+## Detail Implementasi
 
 ### 1. Data Cleaning
 
-**Proses:**
+**Kode Program:**
 ```python
 df_place = df_place.drop(['Time_Minutes','Unnamed: 11','Unnamed: 12'], axis=1)
 ```
 
-**Deskripsi:**
-Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12`.
+**Proses yang Dilakukan:**
+Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti Time_Minutes, Unnamed: 11, dan Unnamed: 12 dari dataset tempat wisata.
 
-**Alasan:**
-- Kolom dengan missing value tinggi dapat mengganggu kualitas model
-- Kolom yang tidak informatif hanya menambah noise dalam data
-- Mengurangi dimensi data yang tidak perlu dapat meningkatkan efisiensi komputasi
+**Alasan Mengapa Diperlukan:**
+- Kolom dengan missing value tinggi dapat mengganggu kualitas model dan menyebabkan error saat training
+- Kolom yang tidak informatif hanya menambah noise dalam data dan tidak berkontribusi pada proses pembelajaran
+- Mengurangi dimensi data yang tidak perlu dapat meningkatkan efisiensi komputasi dan mempercepat proses training
+- Data yang bersih meningkatkan akurasi dan performa sistem rekomendasi
 
 ### 2. Filter Lokasi: Bandung
 
-**Proses:**
+**Kode Program:**
 ```python
 df_place = df_place[df_place['City'] == 'Bandung']
 ```
 
-**Deskripsi:**
-Memfilter data agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom `City`.
+**Proses yang Dilakukan:**
+Memfilter dataset tempat wisata agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom City.
 
-**Alasan:**
-- Fokus pada satu area geografis untuk konsistensi sistem rekomendasi
-- Mengurangi kompleksitas data dengan membatasi scope lokasi
-- Memastikan relevansi rekomendasi untuk pengguna di area tertentu
+**Alasan Mengapa Diperlukan:**
+- Fokus pada satu area geografis untuk konsistensi sistem rekomendasi yang lebih terarah
+- Mengurangi kompleksitas data dengan membatasi scope lokasi sehingga model lebih fokus
+- Memastikan relevansi rekomendasi untuk pengguna di area tertentu dan mudah diakses
+- Menghindari bias geografis yang dapat mempengaruhi kualitas rekomendasi
 
 ### 3. Merge Dataset
 
-**Proses:**
+**Kode Program:**
 ```python
 df_rating = pd.merge(df_rating, df_place[['Place_Id']], how='right', on='Place_Id')
 df_user = pd.merge(df_user, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates().sort_values('User_Id')
 ```
 
-**Deskripsi:**
-Menggabungkan data rating dengan data tempat wisata (`Place_Id`) dan pengguna (`User_Id`) agar hanya mencakup data yang valid.
+**Proses yang Dilakukan:**
+Menggabungkan data rating dengan data tempat wisata berdasarkan Place_Id dan data pengguna berdasarkan User_Id, kemudian menghapus duplikasi dan mengurutkan berdasarkan User_Id.
 
-**Alasan:**
-- Memastikan konsistensi referensial antar tabel
-- Menghilangkan data orphan (rating tanpa tempat wisata atau user yang tidak valid)
-- Menjamin kualitas data untuk proses modeling selanjutnya
+**Alasan Mengapa Diperlukan:**
+- Memastikan konsistensi referensial antar tabel sehingga tidak ada data yang tidak valid
+- Menghilangkan data orphan seperti rating tanpa tempat wisata atau user yang tidak valid
+- Menjamin kualitas data untuk proses modeling selanjutnya dengan data yang terintegrasi
+- Memastikan setiap rating memiliki informasi lengkap tentang user dan tempat wisata
 
 ### 4. TF-IDF Vectorization
 
-**Proses:**
+**Kode Program:**
 ```python
 tfidf_vectorizer_for_category = TfidfVectorizer()
 tfidf_matrix = tfidf_vectorizer_for_category.fit_transform(df_place['Category'])
 ```
 
-**Deskripsi:**
-Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata untuk CBF.
+**Proses yang Dilakukan:**
+Menerapkan TfidfVectorizer pada kolom Category untuk mengubah data kategori tempat wisata dari bentuk teks menjadi representasi numerik berupa matriks TF-IDF.
 
-**Alasan:**
+**Alasan Mengapa Diperlukan:**
 - Mengubah data kategori tekstual menjadi representasi numerik yang dapat diproses oleh algoritma machine learning
-- TF-IDF memberikan bobot yang lebih tinggi untuk kata yang jarang muncul namun informatif
+- TF-IDF memberikan bobot yang lebih tinggi untuk kata yang jarang muncul namun informatif untuk membedakan kategori
 - Memungkinkan perhitungan similarity berbasis konten untuk Content-Based Filtering
+- Representasi vektor memungkinkan perhitungan matematis untuk menentukan kemiripan antar tempat wisata
 
 ### 5. Encoding ID Manual
 
-**Proses:**
+**Kode Program:**
 ```python
 def dict_encoder(col, data=df):
     unique_val = data[col].unique().tolist()
@@ -219,51 +240,54 @@ df['user'] = df['User_Id'].map(user_to_user_encoded)
 df['place'] = df['Place_Id'].map(place_to_place_encoded)
 ```
 
-**Deskripsi:**
-Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik menggunakan dictionary custom agar dapat digunakan dalam model CF.
+**Proses yang Dilakukan:**
+Membuat fungsi custom untuk encoding User_Id dan Place_Id ke bentuk indeks numerik menggunakan dictionary mapping dua arah, kemudian menerapkannya pada dataset.
 
-**Alasan:**
-- Model machine learning membutuhkan input numerik, bukan string atau ID kategorikal
-- Dictionary encoding memberikan fleksibilitas dalam mapping kembali ke ID asli
-- Memastikan setiap user dan place memiliki representasi numerik yang unik dan berurutan
-- Lebih kontrol dibanding menggunakan LabelEncoder untuk kebutuhan khusus sistem rekomendasi
+**Alasan Mengapa Diperlukan:**
+- Model machine learning membutuhkan input numerik, tidak dapat memproses string atau ID kategorikal
+- Dictionary encoding memberikan fleksibilitas dalam mapping kembali ke ID asli saat diperlukan
+- Memastikan setiap user dan place memiliki representasi numerik yang unik dan berurutan dari 0
+- Memberikan kontrol lebih dibanding LabelEncoder untuk kebutuhan khusus sistem rekomendasi
+- Encoding manual memungkinkan penyesuaian sesuai kebutuhan spesifik project
 
 ### 6. Normalisasi Rating Manual
 
-**Proses:**
+**Kode Program:**
 ```python
 df['Place_Ratings'] = df['Place_Ratings'].values.astype(np.float32)
 min_rating, max_rating = min(df['Place_Ratings']), max(df['Place_Ratings'])
 y = df['Place_Ratings'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values
 ```
 
-**Deskripsi:**
-Rating dinormalisasi ke skala 0–1 secara manual menggunakan formula min-max untuk meningkatkan kestabilan pelatihan pada model CF.
+**Proses yang Dilakukan:**
+Mengubah tipe data rating menjadi float32, menghitung nilai minimum dan maksimum rating, kemudian menerapkan normalisasi min-max untuk mengubah skala rating ke rentang 0-1.
 
-**Alasan:**
-- Model neural network atau embedding-based lebih stabil dengan input dalam rentang terbatas (0-1)
-- Menghindari bias akibat skala rating yang berbeda-beda
-- Mempercepat konvergensi model selama training
-- Implementasi manual memberikan kontrol penuh terhadap proses normalisasi
+**Alasan Mengapa Diperlukan:**
+- Model neural network atau embedding-based lebih stabil dengan input dalam rentang terbatas seperti 0-1
+- Menghindari bias akibat skala rating yang berbeda-beda yang dapat mempengaruhi pembelajaran model
+- Mempercepat konvergensi model selama training karena gradient lebih stabil
+- Implementasi manual memberikan kontrol penuh terhadap proses normalisasi sesuai kebutuhan
+- Mencegah satu fitur mendominasi yang lain karena perbedaan skala nilai
 
 ### 7. Random Shuffle Data
 
-**Proses:**
+**Kode Program:**
 ```python
 df = df.sample(frac=1, random_state=42)
 ```
 
-**Deskripsi:**
-Mengacak urutan data menggunakan `sample(frac=1)` untuk memastikan distribusi data yang baik.
+**Proses yang Dilakukan:**
+Mengacak urutan seluruh baris data menggunakan fungsi sample dengan frac=1 untuk mengambil 100% data dalam urutan acak, dengan random_state=42 untuk reproducibility.
 
-**Alasan:**
+**Alasan Mengapa Diperlukan:**
 - Menghindari bias akibat urutan data yang mungkin teratur berdasarkan waktu atau kategori tertentu
-- Memastikan distribusi yang merata antara data training dan validasi
-- Meningkatkan generalisasi model dengan variasi data yang lebih baik
+- Memastikan distribusi yang merata antara data training dan validasi saat dilakukan split
+- Meningkatkan generalisasi model dengan variasi data yang lebih baik dan representatif
+- Mencegah model belajar dari pola urutan data yang tidak relevan dengan masalah yang ingin diselesaikan
 
 ### 8. Split Data Manual
 
-**Proses:**
+**Kode Program:**
 ```python
 x = df[['user', 'place']].values
 train_indices = int(0.8 * df.shape[0])
@@ -275,18 +299,28 @@ x_train, x_val, y_train, y_val = (
 )
 ```
 
-**Deskripsi:**
-Membagi data rating menjadi 80% data latih dan 20% data validasi secara manual menggunakan indexing.
+**Proses yang Dilakukan:**
+Memisahkan fitur user dan place sebagai input X, menghitung indeks untuk pembagian 80% data training, kemudian membagi data menjadi set training dan validasi menggunakan indexing manual.
 
-**Alasan:**
-- Kontrol presisi terhadap proporsi pembagian data (80:20)
-- Implementasi manual memungkinkan penyesuaian khusus sesuai kebutuhan project
-- Memastikan konsistensi pembagian data untuk reproducibility
-- Memberikan fleksibilitas dalam mengatur strategi pembagian data
+**Alasan Mengapa Diperlukan:**
+- Kontrol presisi terhadap proporsi pembagian data dengan rasio 80:20 yang optimal untuk training dan evaluasi
+- Implementasi manual memungkinkan penyesuaian khusus sesuai kebutuhan project dan karakteristik data
+- Memastikan konsistensi pembagian data untuk reproducibility dan perbandingan hasil eksperimen
+- Memberikan fleksibilitas dalam mengatur strategi pembagian data tanpa tergantung pada library eksternal
+- Memungkinkan evaluasi model yang objektif dengan data validasi yang terpisah dari training
 
-## Insight
+## Insight dan Kesimpulan
 
 Setiap tahapan dalam data preparation memiliki tujuan spesifik untuk memastikan kualitas data yang optimal sebelum masuk ke tahap modeling. Pendekatan manual dalam beberapa proses seperti encoding, normalisasi, dan split data memberikan kontrol dan fleksibilitas yang lebih besar, sesuai dengan kebutuhan khusus sistem rekomendasi yang dikembangkan.
+
+Kualitas data preparation menentukan 70% keberhasilan project machine learning. Dengan melakukan tahapan-tahapan ini secara sistematis dan teliti, kita memastikan bahwa model Content-Based Filtering dan Collaborative Filtering dapat bekerja dengan optimal dan memberikan rekomendasi yang akurat dan relevan untuk pengguna.
+
+### Catatan Penting:
+
+* Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
+* Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
+* Pembagian data dilakukan secara manual untuk kontrol yang lebih presisi terhadap proporsi data training dan validasi.
+* Urutan tahapan sudah disesuaikan dengan implementasi aktual di notebook.
 
 ---
 
