@@ -43,9 +43,11 @@ Solusi yang diusulkan mencakup dua pendekatan:
 
 ---
 
-## Data Understanding
+# Data Understanding
 
-### Dataset:
+## Dataset
+
+Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun sistem rekomendasi tempat wisata:
 
 * `tourism_with_id.csv`: informasi lengkap mengenai tempat wisata.
 * `tourism_rating.csv`: data interaksi rating pengguna terhadap tempat wisata.
@@ -55,53 +57,75 @@ Solusi yang diusulkan mencakup dua pendekatan:
 
 ---
 
-### Struktur dan Kondisi Data:
+## Struktur dan Kondisi Data
 
-####  `tourism_with_id.csv`
+### 1. Dataset `tourism_with_id.csv`
 
-* **Ukuran data:** 437 baris × 13 kolom
-* **Fitur utama:**
+**Jumlah data:** 437 baris × 13 kolom
 
-  * `Place_Id`, `Place_Name`, `Category`, `City`, `Price`, `Rating`, `Description`, `Lat`, `Long`
-* **Kondisi data:**
+**Uraian fitur:**
+* `Place_Id`: Identifier unik untuk setiap tempat wisata (integer)
+* `Place_Name`: Nama tempat wisata (string)
+* `Description`: Deskripsi detail mengenai tempat wisata (string)
+* `Category`: Kategori jenis tempat wisata seperti Budaya, Alam, Bahari, dll. (string)
+* `City`: Nama kota lokasi tempat wisata berada (string)
+* `Price`: Harga tiket masuk dalam rupiah (integer)
+* `Rating`: Rating rata-rata tempat wisata berdasarkan ulasan pengunjung, skala 1-5 (float)
+* `Time_Minutes`: Estimasi waktu kunjungan dalam menit (float)
+* `Coordinate`: Koordinat lokasi dalam format string (string)
+* `Lat`: Koordinat lintang tempat wisata (float)
+* `Long`: Koordinat bujur tempat wisata (float)
+* `Unnamed: 11`: Kolom kosong tanpa data yang relevan (float)
+* `Unnamed: 12`: Kolom tambahan dengan nilai integer yang tidak jelas fungsinya (integer)
 
-  * **Missing values:** `Time_Minutes` memiliki 232 missing values, sedangkan `Unnamed: 11` seluruhnya kosong (437/437).
-  * **Kolom yang dihapus:** `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12` karena missing value tinggi atau tidak relevan.
-  * **Duplikat:** Tidak ditemukan data duplikat.
+**Kondisi data:**
+* **Missing values:** `Time_Minutes` memiliki 232 missing values (53% dari total data), sedangkan `Unnamed: 11` seluruhnya kosong (437/437).
+* **Kolom yang dihapus:** `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12` karena missing value tinggi atau tidak relevan untuk sistem rekomendasi.
+* **Duplikat:** Tidak ditemukan data duplikat.
 
+### 2. Dataset `tourism_rating.csv`
 
-####  `tourism_rating.csv`
+**Jumlah data:** 10.000 baris × 3 kolom
 
-* **Ukuran data:** 10.000 baris × 3 kolom
-* **Fitur:** `User_Id`, `Place_Id`, `Place_Ratings` (1–5)
-* **Kondisi data:**
+**Uraian fitur:**
+* `User_Id`: Identifier unik untuk setiap pengguna yang memberikan rating (integer)
+* `Place_Id`: Identifier tempat wisata yang diberi rating, mengacu pada Place_Id di dataset tempat wisata (integer)
+* `Place_Ratings`: Rating yang diberikan pengguna terhadap tempat wisata, skala 1-5 (integer)
 
-  * Tidak ada missing value.
-  * Ditemukan **79 data duplikat**, namun data tersebut tetap digunakan karena:
+**Kondisi data:**
+* **Missing values:** Tidak ada missing value.
+* **Duplikat:** Ditemukan **79 data duplikat**, namun data tersebut tetap digunakan karena:
+  * **Rating bersifat dinamis**, memungkinkan pengguna memberikan penilaian lebih dari sekali terhadap suatu tempat (misalnya setelah kunjungan kedua).
+  * Duplikasi ini mencerminkan **perubahan persepsi atau pengalaman pengguna dari waktu ke waktu**, sehingga tetap dianggap relevan dalam membentuk preferensi pengguna secara lebih akurat dalam sistem rekomendasi.
 
-    * **Rating bersifat dinamis**, memungkinkan pengguna memberikan penilaian lebih dari sekali terhadap suatu tempat (misalnya setelah kunjungan kedua).
-    * Duplikasi ini mencerminkan **perubahan persepsi atau pengalaman pengguna dari waktu ke waktu**, sehingga tetap dianggap relevan dalam membentuk preferensi pengguna secara lebih akurat dalam sistem rekomendasi.
+### 3. Dataset `user.csv`
 
+**Jumlah data:** 300 baris × 3 kolom
 
-####  `user.csv`
+**Uraian fitur:**
+* `User_Id`: Identifier unik untuk setiap pengguna, sesuai dengan User_Id pada dataset rating (integer)
+* `Location`: Kota atau daerah asal pengguna (string)
+* `Age`: Usia pengguna dalam tahun (integer)
 
-* **Ukuran data:** 300 baris × 3 kolom
-* **Fitur:** `User_Id`, `Location`, `Age`
-* **Kondisi data:**
-
-  * Tidak ada missing value atau duplikat.
+**Kondisi data:**
+* **Missing values:** Tidak ada missing value.
+* **Duplikat:** Tidak ditemukan data duplikat.
 
 ---
 
-### Insight Awal:
+## Insight Awal
 
-* Sebagian besar tempat wisata memiliki metadata deskriptif, namun informasi durasi kunjungan banyak yang kosong.
-* Data interaksi pengguna (rating) cukup kaya dan bisa dimanfaatkan untuk sistem rekomendasi berbasis CF.
-* Sebagian besar pengguna berusia antara 20–40 tahun, sesuai dengan target demografis wisata kota Bandung.
+* **Kelengkapan metadata:** Sebagian besar tempat wisata memiliki informasi deskriptif yang lengkap, namun data estimasi waktu kunjungan (`Time_Minutes`) banyak yang kosong sehingga tidak dapat dimanfaatkan secara optimal.
+
+* **Kualitas data interaksi:** Data rating pengguna cukup kaya dengan 10.000 interaksi yang dapat dimanfaatkan untuk membangun sistem rekomendasi berbasis Collaborative Filtering.
+
+* **Profil pengguna:** Dataset mencakup 300 pengguna unik dengan informasi demografis yang dapat digunakan untuk analisis preferensi berdasarkan lokasi dan usia.
+
+* **Cakupan geografis:** Data tempat wisata mencakup berbagai kota di Indonesia dengan kategori yang beragam, memberikan variasi yang baik untuk sistem rekomendasi.
 
 ---
 
-### Visualisasi:
+## Visualisasi
 
 ![Distribusi Rating](assets/rating_distribution.png)
 *Gambar 1. Histogram distribusi rating wisatawan.*
