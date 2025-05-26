@@ -118,10 +118,12 @@ Berikut adalah seluruh tahapan yang dilakukan dalam proses persiapan data sebelu
 | 1  | Data Cleaning          | Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12`. |
 | 2  | Filter Lokasi: Bandung | Memfilter data agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom `City`.                     |
 | 3  | Merge Dataset          | Menggabungkan data rating dengan data tempat wisata (`Place_Id`) dan pengguna (`User_Id`) agar hanya mencakup data yang valid.  |
-| 4  | Encoding ID            | Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik agar dapat digunakan dalam model berbasis matriks (CF).  |
-| 5  | Normalisasi Rating     | Rating dinormalisasi ke skala 0–1 untuk meningkatkan kestabilan pelatihan pada model deep learning.                             |
-| 6  | TF-IDF Vectorization   | Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata.                             |
-| 7  | Split Data untuk CF    | Membagi data rating menjadi data latih dan data uji menggunakan `train_test_split`.                                             |
+| 4  | TF-IDF Vectorization   | Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata untuk CBF.                   |
+| 5  | Cosine Similarity      | Menghitung cosine similarity antar tempat wisata berdasarkan kategori untuk sistem Content-Based Filtering.                     |
+| 6  | Encoding ID Manual     | Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik menggunakan dictionary custom agar dapat digunakan dalam model CF. |
+| 7  | Normalisasi Rating Manual | Rating dinormalisasi ke skala 0–1 secara manual menggunakan formula min-max untuk meningkatkan kestabilan pelatihan pada model CF. |
+| 8  | Random Shuffle Data    | Mengacak urutan data menggunakan `sample(frac=1)` untuk memastikan distribusi data yang baik.                                    |
+| 9  | Split Data Manual      | Membagi data rating menjadi 80% data latih dan 20% data validasi secara manual menggunakan indexing.                            |
 
 ---
 
@@ -130,7 +132,7 @@ Berikut adalah seluruh tahapan yang dilakukan dalam proses persiapan data sebelu
 #### 1. Data Cleaning
 
 ```python
-place_df.drop(['Time_Minutes', 'Unnamed: 11', 'Unnamed: 12'], axis=1, inplace=True)
+df_place = df_place.drop(['Time_Minutes','Unnamed: 11','Unnamed: 12'], axis=1)
 ```
 
 Menghapus kolom yang tidak informatif atau memiliki missing value terlalu banyak.
@@ -138,74 +140,98 @@ Menghapus kolom yang tidak informatif atau memiliki missing value terlalu banyak
 #### 2. Filter Lokasi Bandung
 
 ```python
-place_df = place_df[place_df['City'].str.contains("Bandung", na=False)]
+df_place = df_place[df_place['City'] == 'Bandung']
 ```
 
-Hanya mempertahankan baris data dengan `City` mengandung "Bandung".
+Hanya mempertahankan baris data dengan `City` sama dengan "Bandung".
 
 #### 3. Merge Dataset
 
 ```python
-df_rating = pd.merge(df_rating, place_df[['Place_Id']], how='right', on='Place_Id')
-df_user = pd.merge(user_df, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates()
+df_rating = pd.merge(df_rating, df_place[['Place_Id']], how='right', on='Place_Id')
+df_user = pd.merge(df_user, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates().sort_values('User_Id')
 ```
 
 Menggabungkan rating dengan data tempat wisata dan user untuk menyaring data yang relevan.
 
-#### 4. Encoding ID
+#### 4. TF-IDF Vectorization
 
 ```python
-from sklearn.preprocessing import LabelEncoder
-
-user_encoder = LabelEncoder()
-place_encoder = LabelEncoder()
-
-df_rating['user_encoded'] = user_encoder.fit_transform(df_rating['User_Id'])
-df_rating['place_encoded'] = place_encoder.fit_transform(df_rating['Place_Id'])
+tfidf_vectorizer_for_category = TfidfVectorizer()
+tfidf_matrix = tfidf_vectorizer_for_category.fit_transform(df_place['Category'])
 ```
 
-Melakukan encoding `User_Id` dan `Place_Id` ke bentuk numerik.
+Mengubah data kategori tempat wisata menjadi representasi numerik berbasis TF-IDF untuk Content-Based Filtering.
 
-#### 5. Normalisasi Rating
+#### 5. Cosine Similarity
 
 ```python
-from sklearn.preprocessing import MinMaxScaler
-
-scaler = MinMaxScaler()
-df_rating['rating_normalized'] = scaler.fit_transform(df_rating[['Place_Ratings']])
+cosine_sim = cosine_similarity(tfidf_matrix)
+cosine_sim_df = pd.DataFrame(cosine_sim, index=df_place.Place_Name, columns=df_place.Place_Name)
 ```
 
-Menormalkan rating dari rentang 1–5 menjadi 0–1.
+Menghitung kemiripan cosine antar tempat wisata berdasarkan kategori yang telah di-vektorisasi.
 
-#### 6. TF-IDF Vectorization
+#### 6. Encoding ID Manual
 
 ```python
-from sklearn.feature_extraction.text import TfidfVectorizer
+def dict_encoder(col, data=df):
+    unique_val = data[col].unique().tolist()
+    val_to_val_encoded = {x: i for i, x in enumerate(unique_val)}
+    val_encoded_to_val = {i: x for i, x in enumerate(unique_val)}
+    return val_to_val_encoded, val_encoded_to_val
 
-tfidf_vectorizer = TfidfVectorizer()
-tfidf_matrix = tfidf_vectorizer.fit_transform(place_df['Category'])
+# Encoding User_Id dan Place_Id
+user_to_user_encoded, user_encoded_to_user = dict_encoder('User_Id')
+place_to_place_encoded, place_encoded_to_place = dict_encoder('Place_Id')
+
+df['user'] = df['User_Id'].map(user_to_user_encoded)
+df['place'] = df['Place_Id'].map(place_to_place_encoded)
 ```
 
-Mengubah data kategori menjadi representasi numerik berbasis teks.
+Melakukan encoding `User_Id` dan `Place_Id` ke bentuk numerik menggunakan dictionary custom, bukan `LabelEncoder`.
 
-#### 7. Split Data untuk CF
+#### 7. Normalisasi Rating Manual
 
 ```python
-from sklearn.model_selection import train_test_split
-
-X = df_rating[['user_encoded', 'place_encoded']].values
-y = df_rating['rating_normalized'].values
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+df['Place_Ratings'] = df['Place_Ratings'].values.astype(np.float32)
+min_rating, max_rating = min(df['Place_Ratings']), max(df['Place_Ratings'])
+y = df['Place_Ratings'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values
 ```
 
-Membagi data rating untuk pelatihan dan pengujian model Collaborative Filtering.
+Menormalkan rating secara manual menggunakan formula min-max: `(x - min) / (max - min)`, bukan menggunakan `MinMaxScaler`.
+
+#### 8. Random Shuffle Data
+
+```python
+df = df.sample(frac=1, random_state=42)
+```
+
+Mengacak urutan data untuk memastikan distribusi yang baik sebelum pembagian data.
+
+#### 9. Split Data Manual
+
+```python
+x = df[['user', 'place']].values
+train_indices = int(0.8 * df.shape[0])
+x_train, x_val, y_train, y_val = (
+    x[:train_indices],
+    x[train_indices:],
+    y[:train_indices],
+    y[train_indices:]
+)
+```
+
+Membagi data secara manual dengan menggunakan indexing (80% untuk training, 20% untuk validasi), bukan menggunakan `train_test_split`.
 
 ---
 
 ### Catatan Penting:
 
-* Normalisasi dilakukan karena banyak model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (misal 0–1).
-* Encoding ID sangat penting untuk CF karena model mengandalkan representasi numerik pengguna dan item.
+* Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
+* Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
+* Pembagian data dilakukan secara manual untuk kontrol yang lebih presisi terhadap proporsi data training dan validasi.
+* Urutan tahapan sudah disesuaikan dengan implementasi aktual di notebook.
 
 ---
 
