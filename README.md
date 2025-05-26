@@ -77,16 +77,36 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 * `Price`: Harga tiket masuk dalam rupiah (integer)
 * `Rating`: Rating rata-rata tempat wisata berdasarkan ulasan pengunjung, skala 1-5 (float)
 * `Time_Minutes`: Estimasi waktu kunjungan dalam menit (float)
-* `Coordinate`: Koordinat lokasi dalam format string (string)
+* `Coordinate`: Koordinat lokasi dalam format string, Format string dari koordinat GPS. Redundan dengan Lat dan Long. (string)
 * `Lat`: Koordinat lintang tempat wisata (float)
 * `Long`: Koordinat bujur tempat wisata (float)
 * `Unnamed: 11`: Kolom kosong tanpa data yang relevan (float)
 * `Unnamed: 12`: Kolom tambahan dengan nilai integer yang tidak jelas fungsinya (integer)
 
+
 **Kondisi data:**
 * **Missing values:** `Time_Minutes` memiliki 232 missing values (53% dari total data), sedangkan `Unnamed: 11` seluruhnya kosong (437/437).
 * **Kolom yang dihapus:** `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12` karena missing value tinggi atau tidak relevan untuk sistem rekomendasi.
 * **Duplikat:** Tidak ditemukan data duplikat.
+
+**Visualisasi dalam bentuk tabel**
+
+| Fitur          | Tipe Data               | Deskripsi                                                             |
+| -------------- | ----------------------- | --------------------------------------------------------------------- |
+| `Place_Id`     | Integer                 | ID unik untuk tempat wisata                                           |
+| `Place_Name`   | String                  | Nama tempat wisata                                                    |
+| `Description`  | String                  | Deskripsi tempat wisata                                               |
+| `Category`     | String                  | Kategori wisata (Budaya, Alam, dll.)                                  |
+| `City`         | String                  | Kota lokasi tempat wisata                                             |
+| `Price`        | Integer                 | Harga tiket masuk (rupiah)                                            |
+| `Rating`       | Float                   | Rating rata-rata pengunjung (1–5)                                     |
+| `Time_Minutes` | Float                   | Estimasi waktu kunjungan (menit) – banyak nilai kosong (53%)          |
+| `Coordinate`   | String                  | Koordinat dalam format string, redundan dengan kolom `Lat` dan `Long` |
+| `Lat`          | Float                   | Koordinat lintang                                                     |
+| `Long`         | Float                   | Koordinat bujur                                                       |
+| `Unnamed: 11`  | Float (kosong)          | Kolom kosong, seluruh nilai missing                                   |
+| `Unnamed: 12`  | Integer (tidak relevan) | Nomor urut tambahan, tidak memiliki makna khusus                      |
+
 
 #### 2. Dataset `tourism_rating.csv`
 
@@ -103,6 +123,14 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
   * **Rating bersifat dinamis**, memungkinkan pengguna memberikan penilaian lebih dari sekali terhadap suatu tempat (misalnya setelah kunjungan kedua).
   * Duplikasi ini mencerminkan **perubahan persepsi atau pengalaman pengguna dari waktu ke waktu**, sehingga tetap dianggap relevan dalam membentuk preferensi pengguna secara lebih akurat dalam sistem rekomendasi.
 
+**Visualisasi dalam bentuk tabel**
+
+| Fitur           | Tipe Data | Deskripsi                                                         |
+| --------------- | --------- | ----------------------------------------------------------------- |
+| `User_Id`       | Integer   | ID unik pengguna pemberi rating                                   |
+| `Place_Id`      | Integer   | ID tempat wisata yang diberi rating (mengacu ke `Place_Id` utama) |
+| `Place_Ratings` | Integer   | Rating dari pengguna terhadap tempat wisata (skala 1–5)           |
+
 #### 3. Dataset `user.csv`
 
 **Jumlah data:** 300 baris × 3 kolom
@@ -115,6 +143,12 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 **Kondisi data:**
 * **Missing values:** Tidak ada missing value.
 * **Duplikat:** Tidak ditemukan data duplikat.
+
+**Visualisasi dalam bentuk tabel**
+
+| `User_Id`  | Integer   | ID unik pengguna               |
+| `Location` | String    | Kota atau daerah asal pengguna |
+| `Age`      | Integer   | Usia pengguna dalam tahun      |
 
 ---
 
