@@ -131,6 +131,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 | `Place_Id`      | Integer   | ID tempat wisata yang diberi rating (mengacu ke `Place_Id` utama) |
 | `Place_Ratings` | Integer   | Rating dari pengguna terhadap tempat wisata (skala 1–5)           |
 
+
 #### 3. Dataset `user.csv`
 
 **Jumlah data:** 300 baris × 3 kolom
