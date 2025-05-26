@@ -48,9 +48,9 @@ Solusi yang diusulkan mencakup dua pendekatan:
 
 ---
 
-# Data Understanding
+## Data Understanding
 
-## Dataset
+### Dataset
 
 Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun sistem rekomendasi tempat wisata:
 
@@ -62,9 +62,9 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 ---
 
-## Struktur dan Kondisi Data
+### Struktur dan Kondisi Data
 
-### 1. Dataset `tourism_with_id.csv`
+#### 1. Dataset `tourism_with_id.csv`
 
 **Jumlah data:** 437 baris × 13 kolom
 
@@ -88,7 +88,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 * **Kolom yang dihapus:** `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12` karena missing value tinggi atau tidak relevan untuk sistem rekomendasi.
 * **Duplikat:** Tidak ditemukan data duplikat.
 
-### 2. Dataset `tourism_rating.csv`
+#### 2. Dataset `tourism_rating.csv`
 
 **Jumlah data:** 10.000 baris × 3 kolom
 
@@ -103,7 +103,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
   * **Rating bersifat dinamis**, memungkinkan pengguna memberikan penilaian lebih dari sekali terhadap suatu tempat (misalnya setelah kunjungan kedua).
   * Duplikasi ini mencerminkan **perubahan persepsi atau pengalaman pengguna dari waktu ke waktu**, sehingga tetap dianggap relevan dalam membentuk preferensi pengguna secara lebih akurat dalam sistem rekomendasi.
 
-### 3. Dataset `user.csv`
+#### 3. Dataset `user.csv`
 
 **Jumlah data:** 300 baris × 3 kolom
 
@@ -118,7 +118,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 ---
 
-## Insight Awal
+### Insight Awal
 
 * **Kelengkapan metadata:** Sebagian besar tempat wisata memiliki informasi deskriptif yang lengkap, namun data estimasi waktu kunjungan (`Time_Minutes`) banyak yang kosong sehingga tidak dapat dimanfaatkan secara optimal.
 
@@ -130,18 +130,18 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 ---
 
-## Visualisasi
+### Visualisasi
 
 ![Distribusi Rating](assets/rating_distribution.png)
 *Gambar 1. Histogram distribusi rating wisatawan.*
 
 ---
 
-# Data Preparation
+## Data Preparation
 
 Tahap persiapan data merupakan langkah krusial dalam membangun sistem rekomendasi yang efektif. Berikut adalah tahapan-tahapan yang dilakukan dalam proses data preparation sebelum data digunakan untuk pemodelan Content-Based Filtering (CBF) dan Collaborative Filtering (CF).
 
-## Ringkasan Tahapan Data Preparation
+### Ringkasan Tahapan Data Preparation
 
 | No | Tahapan | Deskripsi | Alasan Utama |
 |----|---------|-----------|--------------|
@@ -154,9 +154,9 @@ Tahap persiapan data merupakan langkah krusial dalam membangun sistem rekomendas
 | 7 | Random Shuffle Data | Mengacak urutan data | Eliminasi bias dan distribusi data yang merata |
 | 8 | Split Data Manual | Membagi data training dan validasi | Evaluasi model yang objektif |
 
-## Detail Implementasi
+### Detail Implementasi
 
-### 1. Data Cleaning
+#### 1. Data Cleaning
 
 **Kode Program:**
 ```python
@@ -172,7 +172,7 @@ Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti Ti
 - Mengurangi dimensi data yang tidak perlu dapat meningkatkan efisiensi komputasi dan mempercepat proses training
 - Data yang bersih meningkatkan akurasi dan performa sistem rekomendasi
 
-### 2. Filter Lokasi: Bandung
+#### 2. Filter Lokasi: Bandung
 
 **Kode Program:**
 ```python
@@ -188,7 +188,7 @@ Memfilter dataset tempat wisata agar hanya menyisakan tempat wisata yang berloka
 - Memastikan relevansi rekomendasi untuk pengguna di area tertentu dan mudah diakses
 - Menghindari bias geografis yang dapat mempengaruhi kualitas rekomendasi
 
-### 3. Merge Dataset
+#### 3. Merge Dataset
 
 **Kode Program:**
 ```python
@@ -205,7 +205,7 @@ Menggabungkan data rating dengan data tempat wisata berdasarkan Place_Id dan dat
 - Menjamin kualitas data untuk proses modeling selanjutnya dengan data yang terintegrasi
 - Memastikan setiap rating memiliki informasi lengkap tentang user dan tempat wisata
 
-### 4. TF-IDF Vectorization
+#### 4. TF-IDF Vectorization
 
 **Kode Program:**
 ```python
@@ -222,7 +222,7 @@ Menerapkan TfidfVectorizer pada kolom Category untuk mengubah data kategori temp
 - Memungkinkan perhitungan similarity berbasis konten untuk Content-Based Filtering
 - Representasi vektor memungkinkan perhitungan matematis untuk menentukan kemiripan antar tempat wisata
 
-### 5. Encoding ID Manual
+#### 5. Encoding ID Manual
 
 **Kode Program:**
 ```python
@@ -250,7 +250,7 @@ Membuat fungsi custom untuk encoding User_Id dan Place_Id ke bentuk indeks numer
 - Memberikan kontrol lebih dibanding LabelEncoder untuk kebutuhan khusus sistem rekomendasi
 - Encoding manual memungkinkan penyesuaian sesuai kebutuhan spesifik project
 
-### 6. Normalisasi Rating Manual
+#### 6. Normalisasi Rating Manual
 
 **Kode Program:**
 ```python
@@ -269,7 +269,7 @@ Mengubah tipe data rating menjadi float32, menghitung nilai minimum dan maksimum
 - Implementasi manual memberikan kontrol penuh terhadap proses normalisasi sesuai kebutuhan
 - Mencegah satu fitur mendominasi yang lain karena perbedaan skala nilai
 
-### 7. Random Shuffle Data
+#### 7. Random Shuffle Data
 
 **Kode Program:**
 ```python
@@ -285,7 +285,7 @@ Mengacak urutan seluruh baris data menggunakan fungsi sample dengan frac=1 untuk
 - Meningkatkan generalisasi model dengan variasi data yang lebih baik dan representatif
 - Mencegah model belajar dari pola urutan data yang tidak relevan dengan masalah yang ingin diselesaikan
 
-### 8. Split Data Manual
+#### 8. Split Data Manual
 
 **Kode Program:**
 ```python
@@ -309,13 +309,13 @@ Memisahkan fitur user dan place sebagai input X, menghitung indeks untuk pembagi
 - Memberikan fleksibilitas dalam mengatur strategi pembagian data tanpa tergantung pada library eksternal
 - Memungkinkan evaluasi model yang objektif dengan data validasi yang terpisah dari training
 
-## Insight 
+### Insight 
 
 Setiap tahapan dalam data preparation memiliki tujuan spesifik untuk memastikan kualitas data yang optimal sebelum masuk ke tahap modeling. Pendekatan manual dalam beberapa proses seperti encoding, normalisasi, dan split data memberikan kontrol dan fleksibilitas yang lebih besar, sesuai dengan kebutuhan khusus sistem rekomendasi yang dikembangkan.
 
 Kualitas data preparation menentukan 70% keberhasilan project machine learning. Dengan melakukan tahapan-tahapan ini secara sistematis dan teliti, kita memastikan bahwa model Content-Based Filtering dan Collaborative Filtering dapat bekerja dengan optimal dan memberikan rekomendasi yang akurat dan relevan untuk pengguna.
 
-### Catatan Penting:
+#### Catatan Penting:
 
 - Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
 - Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
