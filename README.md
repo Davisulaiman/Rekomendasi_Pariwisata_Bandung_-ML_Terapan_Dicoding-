@@ -147,6 +147,8 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 **Visualisasi dalam bentuk tabel**
 
+| Fitur      | Tipe Data | Deskripsi                      |
+| ---------- | --------- | ------------------------------ |
 | `User_Id`  | Integer   | ID unik pengguna               |
 | `Location` | String    | Kota atau daerah asal pengguna |
 | `Age`      | Integer   | Usia pengguna dalam tahun      |
