@@ -309,7 +309,7 @@ Memisahkan fitur user dan place sebagai input X, menghitung indeks untuk pembagi
 - Memberikan fleksibilitas dalam mengatur strategi pembagian data tanpa tergantung pada library eksternal
 - Memungkinkan evaluasi model yang objektif dengan data validasi yang terpisah dari training
 
-## Insight dan Kesimpulan
+## Insight 
 
 Setiap tahapan dalam data preparation memiliki tujuan spesifik untuk memastikan kualitas data yang optimal sebelum masuk ke tahap modeling. Pendekatan manual dalam beberapa proses seperti encoding, normalisasi, dan split data memberikan kontrol dan fleksibilitas yang lebih besar, sesuai dengan kebutuhan khusus sistem rekomendasi yang dikembangkan.
 
@@ -317,10 +317,10 @@ Kualitas data preparation menentukan 70% keberhasilan project machine learning. 
 
 ### Catatan Penting:
 
-* Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
-* Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
-* Pembagian data dilakukan secara manual untuk kontrol yang lebih presisi terhadap proporsi data training dan validasi.
-* Urutan tahapan sudah disesuaikan dengan implementasi aktual di notebook.
+- Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
+- Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
+- Pembagian data dilakukan secara manual untuk kontrol yang lebih presisi terhadap proporsi data training dan validasi.
+- Urutan tahapan sudah disesuaikan dengan implementasi aktual di notebook.
 
 ---
 
