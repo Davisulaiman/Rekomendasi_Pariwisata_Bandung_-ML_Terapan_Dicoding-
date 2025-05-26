@@ -133,71 +133,77 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 ---
 
 
-## Data Preparation
+# Data Preparation
 
-Berikut adalah seluruh tahapan yang dilakukan dalam proses persiapan data sebelum digunakan untuk **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**:
+Tahap persiapan data merupakan langkah krusial dalam membangun sistem rekomendasi yang efektif. Berikut adalah tahapan-tahapan yang dilakukan dalam proses data preparation sebelum data digunakan untuk pemodelan **Content-Based Filtering (CBF)** dan **Collaborative Filtering (CF)**.
 
-| No | Tahapan                | Deskripsi                                                                                                                       |
-| -- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 1  | Data Cleaning          | Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12`. |
-| 2  | Filter Lokasi: Bandung | Memfilter data agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom `City`.                     |
-| 3  | Merge Dataset          | Menggabungkan data rating dengan data tempat wisata (`Place_Id`) dan pengguna (`User_Id`) agar hanya mencakup data yang valid.  |
-| 4  | TF-IDF Vectorization   | Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata untuk CBF.                   |
-| 5  | Cosine Similarity      | Menghitung cosine similarity antar tempat wisata berdasarkan kategori untuk sistem Content-Based Filtering.                     |
-| 6  | Encoding ID Manual     | Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik menggunakan dictionary custom agar dapat digunakan dalam model CF. |
-| 7  | Normalisasi Rating Manual | Rating dinormalisasi ke skala 0–1 secara manual menggunakan formula min-max untuk meningkatkan kestabilan pelatihan pada model CF. |
-| 8  | Random Shuffle Data    | Mengacak urutan data menggunakan `sample(frac=1)` untuk memastikan distribusi data yang baik.                                    |
-| 9  | Split Data Manual      | Membagi data rating menjadi 80% data latih dan 20% data validasi secara manual menggunakan indexing.                            |
+## Tahapan Data Preparation
 
----
+### 1. Data Cleaning
 
-### Penjelasan Kode
-
-#### 1. Data Cleaning
-
+**Proses:**
 ```python
 df_place = df_place.drop(['Time_Minutes','Unnamed: 11','Unnamed: 12'], axis=1)
 ```
 
-Menghapus kolom yang tidak informatif atau memiliki missing value terlalu banyak.
+**Deskripsi:**
+Menghapus kolom yang tidak relevan atau memiliki missing value tinggi seperti `Time_Minutes`, `Unnamed: 11`, dan `Unnamed: 12`.
 
-#### 2. Filter Lokasi Bandung
+**Alasan:**
+- Kolom dengan missing value tinggi dapat mengganggu kualitas model
+- Kolom yang tidak informatif hanya menambah noise dalam data
+- Mengurangi dimensi data yang tidak perlu dapat meningkatkan efisiensi komputasi
 
+### 2. Filter Lokasi: Bandung
+
+**Proses:**
 ```python
 df_place = df_place[df_place['City'] == 'Bandung']
 ```
 
-Hanya mempertahankan baris data dengan `City` sama dengan "Bandung".
+**Deskripsi:**
+Memfilter data agar hanya menyisakan tempat wisata yang berlokasi di Kota Bandung berdasarkan kolom `City`.
 
-#### 3. Merge Dataset
+**Alasan:**
+- Fokus pada satu area geografis untuk konsistensi sistem rekomendasi
+- Mengurangi kompleksitas data dengan membatasi scope lokasi
+- Memastikan relevansi rekomendasi untuk pengguna di area tertentu
 
+### 3. Merge Dataset
+
+**Proses:**
 ```python
 df_rating = pd.merge(df_rating, df_place[['Place_Id']], how='right', on='Place_Id')
 df_user = pd.merge(df_user, df_rating[['User_Id']], how='right', on='User_Id').drop_duplicates().sort_values('User_Id')
 ```
 
-Menggabungkan rating dengan data tempat wisata dan user untuk menyaring data yang relevan.
+**Deskripsi:**
+Menggabungkan data rating dengan data tempat wisata (`Place_Id`) dan pengguna (`User_Id`) agar hanya mencakup data yang valid.
 
-#### 4. TF-IDF Vectorization
+**Alasan:**
+- Memastikan konsistensi referensial antar tabel
+- Menghilangkan data orphan (rating tanpa tempat wisata atau user yang tidak valid)
+- Menjamin kualitas data untuk proses modeling selanjutnya
 
+### 4. TF-IDF Vectorization
+
+**Proses:**
 ```python
 tfidf_vectorizer_for_category = TfidfVectorizer()
 tfidf_matrix = tfidf_vectorizer_for_category.fit_transform(df_place['Category'])
 ```
 
-Mengubah data kategori tempat wisata menjadi representasi numerik berbasis TF-IDF untuk Content-Based Filtering.
+**Deskripsi:**
+Menerapkan `TfidfVectorizer` pada kolom `Category` sebagai representasi fitur konten tempat wisata untuk CBF.
 
-#### 5. Cosine Similarity
+**Alasan:**
+- Mengubah data kategori tekstual menjadi representasi numerik yang dapat diproses oleh algoritma machine learning
+- TF-IDF memberikan bobot yang lebih tinggi untuk kata yang jarang muncul namun informatif
+- Memungkinkan perhitungan similarity berbasis konten untuk Content-Based Filtering
 
-```python
-cosine_sim = cosine_similarity(tfidf_matrix)
-cosine_sim_df = pd.DataFrame(cosine_sim, index=df_place.Place_Name, columns=df_place.Place_Name)
-```
+### 5. Encoding ID Manual
 
-Menghitung kemiripan cosine antar tempat wisata berdasarkan kategori yang telah di-vektorisasi.
-
-#### 6. Encoding ID Manual
-
+**Proses:**
 ```python
 def dict_encoder(col, data=df):
     unique_val = data[col].unique().tolist()
@@ -213,28 +219,51 @@ df['user'] = df['User_Id'].map(user_to_user_encoded)
 df['place'] = df['Place_Id'].map(place_to_place_encoded)
 ```
 
-Melakukan encoding `User_Id` dan `Place_Id` ke bentuk numerik menggunakan dictionary custom, bukan `LabelEncoder`.
+**Deskripsi:**
+Melakukan encoding terhadap `User_Id` dan `Place_Id` ke indeks numerik menggunakan dictionary custom agar dapat digunakan dalam model CF.
 
-#### 7. Normalisasi Rating Manual
+**Alasan:**
+- Model machine learning membutuhkan input numerik, bukan string atau ID kategorikal
+- Dictionary encoding memberikan fleksibilitas dalam mapping kembali ke ID asli
+- Memastikan setiap user dan place memiliki representasi numerik yang unik dan berurutan
+- Lebih kontrol dibanding menggunakan LabelEncoder untuk kebutuhan khusus sistem rekomendasi
 
+### 6. Normalisasi Rating Manual
+
+**Proses:**
 ```python
 df['Place_Ratings'] = df['Place_Ratings'].values.astype(np.float32)
 min_rating, max_rating = min(df['Place_Ratings']), max(df['Place_Ratings'])
 y = df['Place_Ratings'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values
 ```
 
-Menormalkan rating secara manual menggunakan formula min-max: `(x - min) / (max - min)`, bukan menggunakan `MinMaxScaler`.
+**Deskripsi:**
+Rating dinormalisasi ke skala 0–1 secara manual menggunakan formula min-max untuk meningkatkan kestabilan pelatihan pada model CF.
 
-#### 8. Random Shuffle Data
+**Alasan:**
+- Model neural network atau embedding-based lebih stabil dengan input dalam rentang terbatas (0-1)
+- Menghindari bias akibat skala rating yang berbeda-beda
+- Mempercepat konvergensi model selama training
+- Implementasi manual memberikan kontrol penuh terhadap proses normalisasi
 
+### 7. Random Shuffle Data
+
+**Proses:**
 ```python
 df = df.sample(frac=1, random_state=42)
 ```
 
-Mengacak urutan data untuk memastikan distribusi yang baik sebelum pembagian data.
+**Deskripsi:**
+Mengacak urutan data menggunakan `sample(frac=1)` untuk memastikan distribusi data yang baik.
 
-#### 9. Split Data Manual
+**Alasan:**
+- Menghindari bias akibat urutan data yang mungkin teratur berdasarkan waktu atau kategori tertentu
+- Memastikan distribusi yang merata antara data training dan validasi
+- Meningkatkan generalisasi model dengan variasi data yang lebih baik
 
+### 8. Split Data Manual
+
+**Proses:**
 ```python
 x = df[['user', 'place']].values
 train_indices = int(0.8 * df.shape[0])
@@ -246,16 +275,18 @@ x_train, x_val, y_train, y_val = (
 )
 ```
 
-Membagi data secara manual dengan menggunakan indexing (80% untuk training, 20% untuk validasi), bukan menggunakan `train_test_split`.
+**Deskripsi:**
+Membagi data rating menjadi 80% data latih dan 20% data validasi secara manual menggunakan indexing.
 
----
+**Alasan:**
+- Kontrol presisi terhadap proporsi pembagian data (80:20)
+- Implementasi manual memungkinkan penyesuaian khusus sesuai kebutuhan project
+- Memastikan konsistensi pembagian data untuk reproducibility
+- Memberikan fleksibilitas dalam mengatur strategi pembagian data
 
-### Catatan Penting:
+## Insight
 
-* Normalisasi dilakukan secara manual karena model berbasis embedding atau neural network lebih stabil saat menerima input dalam rentang kecil (0–1).
-* Encoding ID menggunakan dictionary custom untuk fleksibilitas dalam mapping kembali ID asli.
-* Pembagian data dilakukan secara manual untuk kontrol yang lebih presisi terhadap proporsi data training dan validasi.
-* Urutan tahapan sudah disesuaikan dengan implementasi aktual di notebook.
+Setiap tahapan dalam data preparation memiliki tujuan spesifik untuk memastikan kualitas data yang optimal sebelum masuk ke tahap modeling. Pendekatan manual dalam beberapa proses seperti encoding, normalisasi, dan split data memberikan kontrol dan fleksibilitas yang lebih besar, sesuai dengan kebutuhan khusus sistem rekomendasi yang dikembangkan.
 
 ---
 
