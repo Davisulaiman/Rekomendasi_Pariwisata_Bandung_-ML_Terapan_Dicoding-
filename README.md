@@ -667,12 +667,22 @@ class myCallback(tf.keras.callbacks.Callback):
 
 #### Hasil Evaluasi CF
 
-Berdasarkan training yang dilakukan dengan callback otomatis:
+Berdasarkan training yang dilakukan selama 100 epoch dengan callback monitoring:
 
-| Metrik | Final Value | Target |
-|--------|-------------|--------|
-| Validation RMSE | < 0.35 | < 0.35 |
-| Training Status | Converged | Success |
+| Metrik | Final Value | Target | Status |
+|--------|-------------|--------|--------|
+| Validation RMSE | 0.3544 | < 0.35 |  Tidak Tercapai |
+| Training RMSE | 0.3120 | - |  Konvergen |
+| Training Loss | 0.6572 | - |  Menurun |
+| Validation Loss | 0.7225 | - |  Stagnant |
+| Training Status | Completed (100/100 epochs) | Early Stop |  Callback tidak terpicu |
+
+**Analisis Performa:**
+- Model menunjukkan tanda-tanda **overfitting** dengan gap yang melebar antara training dan validation metrics
+- Validation RMSE terbaik dicapai pada epoch 12 (0.3514), kemudian berfluktuasi tanpa perbaikan signifikan
+- Training loss terus menurun (0.716 → 0.657) sementara validation loss relatif stabil (~0.72)
+
+Meskipun target RMSE < 0.35 belum tercapai (selisih 0.0044), model masih menunjukkan performa prediksi yang baik dengan kemampuan generalisasi yang perlu ditingkatkan melalui teknik regularization dan early stopping.
 
 #### Visualisasi Grafik RMSE Validasi
 
@@ -710,10 +720,13 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 
 ### Perbandingan Performa Model
 
-| Model | Kelebihan | Kekurangan | Performance Score |
-|-------|-----------|------------|-------------------|
-| **CBF** | - Category precision: 100%<br>- Cold start friendly<br>- Konsisten dan dapat diprediksi | - Terbatas pada metadata<br>- Kurang beragam<br>- Tidak personal | 8.5/10 |
-| **CF** | - Highly personalized<br>- RMSE < 0.35<br>- Diverse recommendations<br>- Quality ratings (avg: 4.34) | - Membutuhkan data historis<br>- Cold start problem | 9.0/10 |
+|| Model   | Kelebihan                                                                                                             | Kekurangan                                                                          | Performance Score |
+| ------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------- |
+| **CBF** | - Category precision: 100%<br>- Cold start friendly<br>- Konsisten dan dapat diprediksi                               | - Terbatas pada metadata<br>- Kurang beragam<br>- Tidak personal                    | 8.5/10            |
+| **CF**  | - Highly personalized<br>- RMSE mendekati 0.35 (0.3544)<br>- Diverse recommendations<br>- Quality ratings (avg: 4.34) | - Membutuhkan data historis<br>- Cold start problem<br>- Target RMSE belum tercapai | 8.8/10            |
+
+---
+
 
 ---
 
@@ -722,7 +735,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 ### 1. Performa Model
 
 * **CBF** menunjukkan precision sempurna (100%) untuk kategori yang sama, dengan kemampuan memberikan rekomendasi yang sangat konsisten berdasarkan konten.
-* **CF** menghasilkan prediksi yang akurat dengan RMSE < 0.35 dan memberikan rekomendasi yang beragam serta personal.
+* **CF** menghasilkan prediksi yang cukup akurat dengan RMSE mendekati target < 0.35 (tercatat 0.3544), dan memberikan rekomendasi yang beragam serta personal. Meskipun belum memenuhi ambang target performanya tetap kompetitif.
 
 ### 2. Karakteristik Rekomendasi
 
@@ -792,8 +805,6 @@ Untuk mencapai target RMSE < 0.35:
 4. **Data Augmentation** atau penambahan data training jika memungkinkan
 5. **Cross-validation** untuk validasi performa yang lebih robust
 
-#### Kesimpulan
-
 Meskipun target RMSE belum tercapai sepenuhnya, model telah menunjukkan performa yang **sangat baik** dalam memberikan rekomendasi berkualitas tinggi dengan tingkat personalisasi yang memuaskan. Dengan perbaikan yang disarankan, model berpotensi mencapai semua target yang ditetapkan.
 
 ---
@@ -805,7 +816,6 @@ Meskipun target RMSE belum tercapai sepenuhnya, model telah menunjukkan performa
 * **Untuk pemerintah/organisasi pariwisata:** Rekomendasi yang relevan dapat dimanfaatkan untuk menyusun strategi promosi wisata yang lebih terarah dan berbasis data.
 
 ---
-
 
 ## Rekomendasi dan Langkah Selanjutnya
 
@@ -834,7 +844,7 @@ Meskipun target RMSE belum tercapai sepenuhnya, model telah menunjukkan performa
 
 2. **Hasil evaluasi menunjukkan performa excellent**:
    * **CBF** mencapai Precision@10 = 100% dengan konsistensi kategori yang sempurna
-   * **CF** mencapai RMSE < 0.35 dengan rekomendasi yang personal dan beragam
+   * **CF** tidak mencapai RMSE < 0.35 dengan rekomendasi yang personal dan beragam
 
 3. **Karakteristik unik masing-masing model**:
    * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
