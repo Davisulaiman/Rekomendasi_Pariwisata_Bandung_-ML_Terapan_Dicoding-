@@ -630,10 +630,9 @@ Analisis lebih lanjut terhadap rekomendasi Trans Studio Bandung:
 
 #### Evaluasi Precision
 
-Grafik berikut memperlihatkan perubahan nilai RMSE pada data validasi selama pelatihan:
+Grafik berikut memperlihatkan nilai precision pada data evaluasi:
 
 ![Precision](assets/Evaluasi_Precision.png)
-
 
 ---
 
@@ -643,7 +642,7 @@ Pada metode Collaborative Filtering, sistem menggunakan pendekatan berbasis neur
 
 #### Evaluasi Kuantitatif dengan RMSE
 
-Root Mean Squared Error atau RMSE adalah metrik evaluasi utama untuk model prediksi rating. RMSE mengukur seberapa jauh nilai prediksi dari nilai sebenarnya.
+Root Mean Squared Error (RMSE) adalah metrik evaluasi utama untuk model prediksi rating. RMSE mengukur seberapa jauh nilai prediksi dari nilai sebenarnya.
 
 $$
 RMSE = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
@@ -660,8 +659,8 @@ Keterangan:
 ```python
 class myCallback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
-        if(logs.get('val_root_mean_squared_error')<0.35):
-            print('Lapor! Metriks validasi sudah sesuai harapan')
+        if(logs.get('val_root_mean_squared_error') < 0.35):
+            print('Lapor! Metrik validasi sudah sesuai harapan')
             self.model.stop_training = True
 ```
 
@@ -671,18 +670,18 @@ Berdasarkan training yang dilakukan selama 100 epoch dengan callback monitoring:
 
 | Metrik | Final Value | Target | Status |
 |--------|-------------|--------|--------|
-| Validation RMSE | 0.3544 | < 0.35 |  Tidak Tercapai |
-| Training RMSE | 0.3120 | - |  Konvergen |
-| Training Loss | 0.6572 | - |  Menurun |
-| Validation Loss | 0.7225 | - |  Stagnant |
-| Training Status | Completed (100/100 epochs) | Early Stop |  Callback tidak terpicu |
+| Validation RMSE | 0.3544 | < 0.35 | Tidak Tercapai |
+| Training RMSE | 0.3120 | - | Konvergen |
+| Training Loss | 0.6572 | - | Menurun |
+| Validation Loss | 0.7225 | - | Stagnant |
+| Training Status | Completed (100/100 epochs) | Early Stop | Callback tidak terpicu |
 
 **Analisis Performa CF:**
 - Model menunjukkan tanda-tanda **overfitting** dengan gap yang melebar antara training dan validation metrics
 - Validation RMSE terbaik dicapai pada epoch 12 (0.3514), kemudian berfluktuasi tanpa perbaikan signifikan
 - Training loss terus menurun (0.716 → 0.657) sementara validation loss relatif stabil (~0.72)
 
-Meskipun target RMSE < 0.35 belum tercapai (selisih 0.0044), model masih menunjukkan performa prediksi yang baik dengan kemampuan generalisasi yang perlu ditingkatkan melalui teknik regularization dan early stopping.
+Meskipun target RMSE < 0.35 belum tercapai (selisih 0.0044), model masih menunjukkan performa prediksi yang baik dengan kemampuan generalisasi yang perlu ditingkatkan melalui teknik regularisasi dan early stopping.
 
 #### Visualisasi Grafik RMSE Validasi
 
@@ -690,28 +689,27 @@ Grafik berikut memperlihatkan perubahan nilai RMSE pada data validasi selama pel
 
 ![rmse_validation_plot](assets/rmse_validation.png)
 
-
 #### Analisis Kualitas Rekomendasi CF
 
-Evaluasi kualitas rekomendasi untuk User 164:
+Evaluasi kualitas rekomendasi untuk User 230:
 
 | Evaluation Aspect | Analysis |
 |-------------------|----------|
 | **Personalization** | Rekomendasi beragam sesuai preferensi historis user |
 | **Diversity** | 4 kategori berbeda: Taman Hiburan, Cagar Alam, Budaya, Tempat Ibadah |
-| **Quality Ratings** | Rata-rata rating 4.34 (range: 4.1-4.8) |
+| **Quality Ratings** | Rata-rata rating 4.45 (range: 4.1-4.8) |
 | **Price Range** | Beragam dari gratis hingga 40.000 |
 | **Relevance** | Sesuai dengan pola rating historis user |
 
 #### Perbandingan dengan Historical Preferences
 
-User 164 memiliki preferensi historis:
-- **Cagar Alam** (Tebing Karaton)
-- **Taman Hiburan** (The Great Asia Africa, Upside Down World)
-- **Tempat Ibadah** (Gereja Katedral Santo Petrus)
+User 230 memiliki preferensi historis:
+- **Taman Hiburan** (Trans Studio Bandung, Batununggal Indah Club)
+- **Cagar Alam** (Gunung Papandayan, Sunrise Point Cukul)
+- **Budaya** (Monumen Bandung Lautan Api)
 
 Rekomendasi sistem mencerminkan preferensi ini dengan:
-- 40% Taman Hiburan (4/10)
+- 50% Taman Hiburan (5/10)
 - 30% Cagar Alam (3/10)
 - 20% Budaya (2/10)
 - 10% Tempat Ibadah (1/10)
@@ -723,8 +721,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 | Model   | Kelebihan                                                                                                              | Kekurangan                                                                                  | Performance Score |
 |---------|------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------|
 | **CBF** | - Category precision: 100%<br>- Cold start friendly<br>- Konsisten dan dapat diprediksi                                | - Terbatas pada metadata<br>- Kurang beragam<br>- Tidak personal                            | 8.5/10            |
-| **CF**  | - Highly personalized<br>- RMSE mendekati 0.35 (0.3544)<br>- Diverse recommendations<br>- Quality ratings (avg: 4.34) | - Membutuhkan data historis<br>- Cold start problem<br>- Target RMSE belum tercapai        | 8.8/10            |
-
+| **CF**  | - Highly personalized<br>- RMSE mendekati 0.35 (0.3544)<br>- Diverse recommendations<br>- Quality ratings (avg: 4.45) | - Membutuhkan data historis<br>- Cold start problem<br>- Target RMSE belum tercapai        | 8.8/10            |
 
 ---
 
@@ -733,7 +730,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 ### 1. Performa Model
 
 * **CBF** menunjukkan precision sempurna (100%) untuk kategori yang sama, dengan kemampuan memberikan rekomendasi yang sangat konsisten berdasarkan konten.
-* **CF** menghasilkan prediksi yang cukup akurat dengan RMSE mendekati target < 0.35 (tercatat 0.3544), dan memberikan rekomendasi yang beragam serta personal. Meskipun belum memenuhi ambang target performanya tetap kompetitif.
+* **CF** menghasilkan prediksi yang cukup akurat dengan RMSE mendekati target < 0.35 (tercatat 0.3544), dan memberikan rekomendasi yang beragam serta personal. Meskipun belum memenuhi ambang target, performanya tetap kompetitif.
 
 ### 2. Karakteristik Rekomendasi
 
@@ -742,15 +739,13 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 
 ### 3. Kualitas Output
 
-* **CBF:** Consistency-focused dengan precision maksimal
-* **CF:** Diversity-focused dengan balance antara akurasi dan variasi
+* **CBF:** Berfokus pada konsistensi dengan precision maksimal
+* **CF:** Berfokus pada keberagaman dengan keseimbangan antara akurasi dan variasi
 
 ### 4. Model Terbaik
 
 * Untuk **pengguna baru** atau **cold start**, **CBF** lebih stabil dengan precision 100%.
 * Untuk **pengguna dengan histori**, **CF** unggul dalam memberikan pengalaman personal yang beragam.
-
-Berikut adalah versi **perbaikan dan penyempurnaan** dari bagian **“Keterkaitan dengan Business Understanding”**, agar benar-benar **terkait erat dan logis** dengan bagian *Business Understanding* di atas:
 
 ---
 
@@ -770,19 +765,16 @@ Secara khusus:
 
 Dengan demikian, sistem ini berhasil mengurangi kebingungan pengguna dalam memilih destinasi, serta **meningkatkan potensi kunjungan ke tempat wisata yang relevan**, sejalan dengan tujuan peningkatan pengalaman pengguna dan dampak ekonomi lokal.
 
----
-
-
 ### Apakah Model Mencapai Tujuan?
 
 Secara keseluruhan, proyek ini telah memenuhi sebagian besar tujuan yang ditetapkan, meskipun masih terdapat satu aspek yang memerlukan penyempurnaan lebih lanjut.
 
 | Tujuan Evaluasi                       | Hasil Model                    | Target               | Status         |
 | ------------------------------------- | ------------------------------ | -------------------- | -------------- |
-| Relevansi rekomendasi (CBF)           | Precision pada 10 = 100 persen | Lebih dari 80 persen | Tercapai       |
-| Akurasi prediksi rating (CF)          | RMSE validasi = 0.3544         | Kurang dari 0.35     | Belum Tercapai |
-| Personalisasi dan variasi rekomendasi | Empat kategori wisata berbeda  | Diversifikasi item   | Tercapai       |
-| Kualitas konten rekomendasi           | Rata-rata rating 4.34 dari 5   | Minimal 4.0          | Tercapai       |
+| Relevansi rekomendasi (CBF)           | Precision@10 = 100%           | > 80%                | Tercapai       |
+| Akurasi prediksi rating (CF)          | RMSE validasi = 0.3544         | < 0.35               | Belum Tercapai |
+| Personalisasi dan variasi rekomendasi | 4 kategori wisata berbeda      | Diversifikasi item   | Tercapai       |
+| Kualitas konten rekomendasi           | Rata-rata rating 4.45 dari 5   | Minimal 4.0          | Tercapai       |
 
 Meskipun nilai RMSE pada model Collaborative Filtering belum sepenuhnya memenuhi target kurang dari 0.35, selisih yang sangat kecil (hanya 0.0044) menunjukkan bahwa model memiliki potensi yang kuat dan dapat ditingkatkan lebih lanjut melalui beberapa pendekatan.
 
@@ -797,21 +789,9 @@ Meskipun nilai RMSE pada model Collaborative Filtering belum sepenuhnya memenuhi
 **Area yang Perlu Ditingkatkan**
 
 * RMSE validasi dari model Collaborative Filtering sedikit melebihi target, yang menunjukkan kemungkinan adanya overfitting.
-* Selama pelatihan selama 100 epoch, nilai *validation loss* cenderung stagnan sementara *training loss* terus menurun, menandakan ketidakseimbangan generalisasi.
+* Selama pelatihan 100 epoch, nilai *validation loss* cenderung stagnan sementara *training loss* terus menurun, menandakan ketidakseimbangan generalisasi.
 
-### Rekomendasi Perbaikan
-
-Untuk mencapai target RMSE di bawah 0.35, beberapa langkah yang dapat dilakukan antara lain:
-
-1. Menerapkan teknik *early stopping* dengan nilai *patience* yang optimal agar pelatihan berhenti saat performa validasi tidak lagi meningkat.
-2. Menambahkan teknik regularisasi seperti dropout atau L1/L2 regularization untuk mengurangi overfitting.
-3. Melakukan optimasi hyperparameter seperti *learning rate*, *batch size*, dan arsitektur model.
-4. Menambah jumlah data pelatihan jika memungkinkan, atau menggunakan teknik augmentasi data.
-5. Menggunakan teknik *cross-validation* untuk mendapatkan evaluasi performa yang lebih stabil dan dapat diandalkan.
-
-Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa yang sangat baik dalam memberikan rekomendasi yang berkualitas, relevan, dan sesuai dengan preferensi pengguna. Dengan penerapan perbaikan yang disarankan, model memiliki peluang besar untuk memenuhi seluruh target yang telah ditetapkan.
-
----
+Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa yang sangat baik dalam memberikan rekomendasi yang berkualitas, relevan, dan sesuai dengan preferensi pengguna.
 
 ### Implikasi Bisnis
 
@@ -823,22 +803,27 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 
 ## Rekomendasi dan Langkah Selanjutnya
 
-1. **Implementasi Hybrid System**:
-   * Gunakan CBF untuk pengguna baru
-   * Beralih ke CF setelah user memiliki minimal 5 rating
+### 1. Implementasi Hybrid System
+* Gunakan CBF untuk pengguna baru
+* Beralih ke CF setelah user memiliki minimal 5 rating
 
-2. **Peningkatan CBF**:
-   * Tambahkan fitur price range dan rating untuk meningkatkan diversity
-   * Implementasi weighted similarity berdasarkan multiple features
+### 2. Peningkatan CBF
+* Tambahkan fitur price range dan rating untuk meningkatkan diversity
+* Implementasi weighted similarity berdasarkan multiple features
 
-3. **Optimasi CF**:
-   * Implementasi negative sampling untuk meningkatkan kualitas embedding
-   * Tambahkan contextual features (waktu, cuaca, musim)
+### 3. Optimasi CF
+* Implementasi negative sampling untuk meningkatkan kualitas embedding
+* Tambahkan contextual features (waktu, cuaca, musim)
+* Menerapkan teknik *early stopping* dengan nilai *patience* yang optimal agar pelatihan berhenti saat performa validasi tidak lagi meningkat
+* Menambahkan teknik regularisasi seperti dropout atau L1/L2 regularization untuk mengurangi overfitting
+* Melakukan optimasi hyperparameter seperti *learning rate*, *batch size*, dan arsitektur model
+* Menambah jumlah data pelatihan jika memungkinkan, atau menggunakan teknik augmentasi data
+* Menggunakan teknik *cross-validation* untuk mendapatkan evaluasi performa yang lebih stabil dan dapat diandalkan
 
-4. **Business Implementation**:
-   * A/B testing untuk mengukur user satisfaction
-   * Real-time feedback integration
-   * Mobile app deployment dengan recommendation API
+### 4. Business Implementation
+* A/B testing untuk mengukur user satisfaction
+* Real-time feedback integration
+* Mobile app deployment dengan recommendation API
 
 ---
 
@@ -846,9 +831,9 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 
 1. Sistem rekomendasi wisata berbasis ML berhasil dibangun menggunakan dua pendekatan komplementer: Content-Based Filtering dan Collaborative Filtering.
 
-2. **Hasil evaluasi menunjukkan performa excellent**:
+2. **Hasil evaluasi menunjukkan performa yang mixed**:
    * **CBF** mencapai Precision@10 = 100% dengan konsistensi kategori yang sempurna
-   * **CF** tidak mencapai RMSE < 0.35 dengan rekomendasi yang personal dan beragam
+   * **CF** belum mencapai target RMSE < 0.35 (tercatat 0.3544) namun tetap memberikan rekomendasi yang personal dan beragam
 
 3. **Karakteristik unik masing-masing model**:
    * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
@@ -858,4 +843,4 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 
 5. Kombinasi kedua pendekatan memberikan solusi komprehensif yang dapat mengakomodasi berbagai skenario pengguna, dari newcomer hingga frequent traveler.
 
-6. Sistem memiliki potensi besar untuk implementasi commercial dengan hasil evaluasi yang melampaui target dan kualitas rekomendasi yang tinggi.
+6. Sistem memiliki potensi besar untuk implementasi komersial dengan hasil evaluasi yang mendekati target dan kualitas rekomendasi yang tinggi.
