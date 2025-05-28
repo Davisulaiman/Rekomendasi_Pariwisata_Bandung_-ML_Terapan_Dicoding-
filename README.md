@@ -70,14 +70,14 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 **Uraian fitur:**
 * `Place_Id`: Identifier unik untuk setiap tempat wisata (integer)
-* `Place_Name`: Nama tempat wisata (string)
-* `Description`: Deskripsi detail mengenai tempat wisata (string)
-* `Category`: Kategori jenis tempat wisata seperti Budaya, Alam, Bahari, dll. (string)
-* `City`: Nama kota lokasi tempat wisata berada (string)
+* `Place_Name`: Nama tempat wisata (object)
+* `Description`: Deskripsi detail mengenai tempat wisata (object)
+* `Category`: Kategori jenis tempat wisata seperti Budaya, Alam, Bahari, dll. (object)
+* `City`: Nama kota lokasi tempat wisata berada (object)
 * `Price`: Harga tiket masuk dalam rupiah (integer)
 * `Rating`: Rating rata-rata tempat wisata berdasarkan ulasan pengunjung, skala 1-5 (float)
 * `Time_Minutes`: Estimasi waktu kunjungan dalam menit (float)
-* `Coordinate`: Koordinat lokasi dalam format string, Format string dari koordinat GPS. Redundan dengan Lat dan Long. (string)
+* `Coordinate`: Koordinat lokasi dalam format object, Format object dari koordinat GPS. Redundan dengan Lat dan Long. (object)
 * `Lat`: Koordinat lintang tempat wisata (float)
 * `Long`: Koordinat bujur tempat wisata (float)
 * `Unnamed: 11`: Kolom kosong tanpa data yang relevan (float)
@@ -94,14 +94,14 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 | Fitur          | Tipe Data               | Deskripsi                                                             |
 | -------------- | ----------------------- | --------------------------------------------------------------------- |
 | `Place_Id`     | Integer                 | ID unik untuk tempat wisata                                           |
-| `Place_Name`   | String                  | Nama tempat wisata                                                    |
-| `Description`  | String                  | Deskripsi tempat wisata                                               |
-| `Category`     | String                  | Kategori wisata (Budaya, Alam, dll.)                                  |
-| `City`         | String                  | Kota lokasi tempat wisata                                             |
+| `Place_Name`   | object                  | Nama tempat wisata                                                    |
+| `Description`  | object                  | Deskripsi tempat wisata                                               |
+| `Category`     | object                  | Kategori wisata (Budaya, Alam, dll.)                                  |
+| `City`         | object                  | Kota lokasi tempat wisata                                             |
 | `Price`        | Integer                 | Harga tiket masuk (rupiah)                                            |
 | `Rating`       | Float                   | Rating rata-rata pengunjung (1–5)                                     |
 | `Time_Minutes` | Float                   | Estimasi waktu kunjungan (menit) – banyak nilai kosong (53%)          |
-| `Coordinate`   | String                  | Koordinat dalam format string, redundan dengan kolom `Lat` dan `Long` |
+| `Coordinate`   | object                  | Koordinat dalam format object (string), redundan dengan kolom `Lat` dan `Long` |
 | `Lat`          | Float                   | Koordinat lintang                                                     |
 | `Long`         | Float                   | Koordinat bujur                                                       |
 | `Unnamed: 11`  | Float (kosong)          | Kolom kosong, seluruh nilai missing                                   |
@@ -138,7 +138,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 
 **Uraian fitur:**
 * `User_Id`: Identifier unik untuk setiap pengguna, sesuai dengan User_Id pada dataset rating (integer)
-* `Location`: Kota atau daerah asal pengguna (string)
+* `Location`: Kota atau daerah asal pengguna (object)
 * `Age`: Usia pengguna dalam tahun (integer)
 
 **Kondisi data:**
@@ -150,7 +150,7 @@ Penelitian ini menggunakan tiga dataset yang saling berkaitan untuk membangun si
 | Fitur      | Tipe Data | Deskripsi                      |
 | ---------- | --------- | ------------------------------ |
 | `User_Id`  | Integer   | ID unik pengguna               |
-| `Location` | String    | Kota atau daerah asal pengguna |
+| `Location` | Object    | Kota atau daerah asal pengguna |
 | `Age`      | Integer   | Usia pengguna dalam tahun      |
 
 ---
