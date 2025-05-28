@@ -721,7 +721,7 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 | Model   | Kelebihan                                                                                                              | Kekurangan                                                                                  | Performance Score |
 |---------|------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|-------------------|
 | **CBF** | - Category precision: 100%<br>- Cold start friendly<br>- Konsisten dan dapat diprediksi                                | - Terbatas pada metadata<br>- Kurang beragam<br>- Tidak personal                            | 8.5/10            |
-| **CF**  | - Highly personalized<br>- RMSE mendekati 0.35 (0.3544)<br>- Diverse recommendations<br>- Quality ratings (avg: 4.45) | - Membutuhkan data historis<br>- Cold start problem<br>- Target RMSE belum tercapai        | 8.8/10            |
+| **CF**  | - Highly personalized<br>- Rekomendasi beragam<br>- Quality ratings tinggi (avg: 4.45)                                 | - Membutuhkan data historis<br>- Cold start problem<br>- RMSE validasi belum capai target (< 0.35) — hasil 0.3544 | 8.4/10            |
 
 ---
 
