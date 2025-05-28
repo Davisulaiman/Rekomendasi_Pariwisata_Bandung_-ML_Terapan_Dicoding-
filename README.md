@@ -763,16 +763,38 @@ Dengan demikian, sistem ini berhasil mengurangi kebingungan pengguna dalam memil
 
 ### Apakah Model Mencapai Goals?
 
-Ya, tujuan proyek tercapai dengan performa yang sangat baik, ditunjukkan oleh hasil evaluasi sebagai berikut:
+Secara keseluruhan, proyek ini mencapai sebagian besar tujuan yang ditetapkan, dengan satu area yang memerlukan perbaikan lebih lanjut:
 
 | Tujuan Evaluasi                       | Hasil Model                    | Target             | Status   |
 | ------------------------------------- | ------------------------------ | ------------------ | -------- |
-| Relevansi rekomendasi (CBF)           | Precision\@10 = 100%           | > 80%              | Tercapai |
-| Akurasi prediksi rating (CF)          | RMSE validasi = 0.344          | < 0.35             | Tercapai |
-| Personalisasi dan variasi rekomendasi | 4 kategori wisata berbeda (CF) | Diversifikasi item | Tercapai |
-| Kualitas konten rekomendasi           | Rata-rata rating 4.34/5.0      | ≥ 4.0              | Tercapai |
+| Relevansi rekomendasi (CBF)           | Precision@10 = 100%           | > 80%              |  Tercapai |
+| Akurasi prediksi rating (CF)          | RMSE validasi = 0.3544        | < 0.35             |  Tidak Tercapai |
+| Personalisasi dan variasi rekomendasi | 4 kategori wisata berbeda (CF) | Diversifikasi item |  Tercapai |
+| Kualitas konten rekomendasi           | Rata-rata rating 4.34/5.0     | ≥ 4.0              |  Tercapai |
 
-CBF berhasil memberikan rekomendasi yang **konsisten dan akurat** berdasarkan kategori, sementara CF memberikan rekomendasi **yang lebih bervariasi dan personal**, menjawab kebutuhan pengguna dengan tingkat kepuasan yang tinggi secara prediktif.
+#### Analisis Performa
+
+** Kekuatan Model:**
+- **Content-Based Filtering (CBF)** berhasil memberikan rekomendasi yang **konsisten dan akurat** berdasarkan kategori dengan precision sempurna
+- **Collaborative Filtering (CF)** memberikan rekomendasi yang **bervariasi dan personal** dengan kualitas konten yang tinggi
+- Model berhasil menjawab kebutuhan personalisasi dan diversifikasi rekomendasi
+
+** Area yang Perlu Perbaikan:**
+- **RMSE validasi CF** sebesar 0.3544 sedikit melampaui target 0.35, menunjukkan adanya *overfitting*
+- Selama 100 epoch training, validation loss relatif stagnant sementara training loss terus menurun
+
+#### Rekomendasi Perbaikan
+
+Untuk mencapai target RMSE < 0.35:
+1. **Implementasi Early Stopping** dengan patience untuk mencegah overfitting
+2. **Tambahkan Regularization** (dropout, L1/L2 regularization)
+3. **Optimasi Hyperparameter** (learning rate, batch size, arsitektur model)
+4. **Data Augmentation** atau penambahan data training jika memungkinkan
+5. **Cross-validation** untuk validasi performa yang lebih robust
+
+#### Kesimpulan
+
+Meskipun target RMSE belum tercapai sepenuhnya, model telah menunjukkan performa yang **sangat baik** dalam memberikan rekomendasi berkualitas tinggi dengan tingkat personalisasi yang memuaskan. Dengan perbaikan yang disarankan, model berpotensi mencapai semua target yang ditetapkan.
 
 ---
 
