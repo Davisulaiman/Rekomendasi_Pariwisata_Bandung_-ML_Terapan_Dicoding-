@@ -832,12 +832,12 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 1. Sistem rekomendasi wisata berbasis ML berhasil dibangun menggunakan dua pendekatan komplementer: Content-Based Filtering dan Collaborative Filtering.
 
 2. **Hasil evaluasi menunjukkan performa yang mixed**:
-   * **CBF** mencapai Precision@10 = 100% dengan konsistensi kategori yang sempurna
-   * **CF** belum mencapai target RMSE < 0.35 (tercatat 0.3544) namun tetap memberikan rekomendasi yang personal dan beragam
+   * **CBF** mencapai Precision@10 = 100% dengan konsistensi kategori yang sempurna.
+   * **CF** belum mencapai target RMSE < 0.35 (tercatat 0.3544) namun tetap memberikan rekomendasi yang personal dan beragam.
 
 3. **Karakteristik unik masing-masing model**:
-   * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
-   * CF memberikan **personalisasi tinggi** dengan diversity yang baik, , meskipun RMSE nya masih bisa ditingkatkan.
+   * **CBF** memberikan **konsistensi tinggi** untuk preferensi kategorial.
+   * **CF** memberikan **personalisasi tinggi** dengan diversity yang baik, meskipun RMSE nya masih bisa ditingkatkan.
 
 4. Proyek ini berhasil menjawab permasalahan bisnis dalam memberikan rekomendasi wisata yang akurat, relevan, dan personal di Kota Bandung.
 
