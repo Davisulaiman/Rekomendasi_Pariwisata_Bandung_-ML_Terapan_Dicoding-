@@ -703,36 +703,6 @@ Evaluasi kualitas rekomendasi untuk User 230:
 
 #### Perbandingan dengan Historical Preferences
 
-### Daftar Rekomendasi untuk User 230
-
-#### Tempat dengan Rating Tertinggi dari User
-
-| Tempat Wisata              | Kategori      |
-| -------------------------- | ------------- |
-| Trans Studio Bandung       | Taman Hiburan |
-| Gunung Papandayan          | Cagar Alam    |
-| Monumen Bandung Lautan Api | Budaya        |
-| Batununggal Indah Club     | Taman Hiburan |
-| Sunrise Point Cukul        | Cagar Alam    |
-
-#### Top-10 Rekomendasi Tempat Wisata untuk Anda
-
-| Rank | Tempat Wisata                     | Kategori      | Harga Tiket | Rating |
-| ---- | --------------------------------- | ------------- | ----------- | ------ |
-| 1    | Dago Dreampark                    | Taman Hiburan | 40.000      | 4.2    |
-| 2    | Alun-Alun Kota Bandung            | Taman Hiburan | 0           | 4.6    |
-| 3    | Stone Garden Citatah              | Taman Hiburan | 30.000      | 4.4    |
-| 4    | Kampung Korea Bandung             | Budaya        | 15.000      | 4.1    |
-| 5    | Selasar Sunaryo Art Space         | Taman Hiburan | 25.000      | 4.6    |
-| 6    | Teras Cikapundung BBWS            | Taman Hiburan | 0           | 4.3    |
-| 7    | Masjid Agung Trans Studio Bandung | Tempat Ibadah | 0           | 4.8    |
-| 8    | Museum Nike Ardilla               | Budaya        | 0           | 4.6    |
-| 9    | Sanghyang Heuleut                 | Cagar Alam    | 10.000      | 4.4    |
-| 10   | Situ Patenggang                   | Cagar Alam    | 20.000      | 4.5    |
-
-**Preferensi historis User 230:**
-
-
 User 230 memiliki preferensi historis:
 - **Taman Hiburan** (Trans Studio Bandung, Batununggal Indah Club)
 - **Cagar Alam** (Gunung Papandayan, Sunrise Point Cukul)
@@ -867,7 +837,7 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 
 3. **Karakteristik unik masing-masing model**:
    * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
-   * CF memberikan **personalisasi tinggi** dengan diversity yang baik, meskipun RMSE nya masih bisa ditingkatkan.
+   * CF memberikan **personalisasi tinggi** dengan diversity yang baik, , meskipun RMSE nya masih bisa ditingkatkan.
 
 4. Proyek ini berhasil menjawab permasalahan bisnis dalam memberikan rekomendasi wisata yang akurat, relevan, dan personal di Kota Bandung.
 
