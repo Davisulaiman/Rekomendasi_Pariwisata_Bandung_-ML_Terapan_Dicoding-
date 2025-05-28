@@ -837,7 +837,7 @@ Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa
 
 3. **Karakteristik unik masing-masing model**:
    * CBF memberikan **konsistensi tinggi** untuk preferensi kategorial
-   * CF memberikan **personalisasi tinggi** dengan diversity yang baik
+   * CF memberikan **personalisasi tinggi** dengan diversity yang baik, meskipun RMSE nya masih bisa ditingkatkan.
 
 4. Proyek ini berhasil menjawab permasalahan bisnis dalam memberikan rekomendasi wisata yang akurat, relevan, dan personal di Kota Bandung.
 
