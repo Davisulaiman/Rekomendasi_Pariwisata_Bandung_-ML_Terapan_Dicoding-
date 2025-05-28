@@ -725,27 +725,34 @@ Rekomendasi sistem mencerminkan preferensi ini dengan:
 
 ---
 
-## Analisis Hasil Modeling
+
+---
+
+## Analisis Performa dan Hasil Modeling
 
 ### 1. Performa Model
 
-* **CBF** menunjukkan precision sempurna (100%) untuk kategori yang sama, dengan kemampuan memberikan rekomendasi yang sangat konsisten berdasarkan konten.
-* **CF** menghasilkan prediksi yang cukup akurat dengan RMSE mendekati target < 0.35 (tercatat 0.3544), dan memberikan rekomendasi yang beragam serta personal. Meskipun belum memenuhi ambang target, performanya tetap kompetitif.
+Model rekomendasi yang dikembangkan terdiri dari dua pendekatan utama:
+
+* **Content-Based Filtering (CBF)** menunjukkan performa sangat baik dengan precision sempurna (100%) dalam menyarankan destinasi yang sesuai kategori. Rekomendasi bersifat konsisten, khususnya untuk pengguna baru atau yang belum memiliki histori interaksi.
+* **Collaborative Filtering (CF)** menghasilkan prediksi yang cukup akurat dengan nilai RMSE validasi sebesar **0.3544**, sedikit di atas target 0.35. Meskipun belum memenuhi target metrik sepenuhnya, model tetap menunjukkan performa kompetitif dan mampu memberikan rekomendasi yang beragam dan bersifat personal.
+
+Selama pelatihan selama 100 epoch, model CF menunjukkan indikasi **overfitting**, ditunjukkan dengan perbedaan signifikan antara training loss yang terus menurun dan validation loss yang cenderung stagnan. Hal ini menunjukkan bahwa model perlu ditingkatkan melalui teknik regularisasi dan pengaturan strategi early stopping yang lebih efektif.
 
 ### 2. Karakteristik Rekomendasi
 
-* **CBF:** Menghasilkan rekomendasi yang homogen (semua kategori Taman Hiburan) tetapi sangat relevan.
-* **CF:** Menghasilkan rekomendasi yang heterogen (4 kategori berbeda) dengan personalisasi tinggi.
+* **CBF:** Menyediakan rekomendasi homogen yang sangat relevan (contoh: semua tempat dari kategori Taman Hiburan). Cocok untuk pengguna dengan preferensi kategorial yang jelas.
+* **CF:** Menyediakan rekomendasi heterogen dari berbagai kategori (Taman Hiburan, Budaya, Cagar Alam, Tempat Ibadah) dan dapat menangkap preferensi pengguna berdasarkan interaksi historis.
 
 ### 3. Kualitas Output
 
-* **CBF:** Berfokus pada konsistensi dengan precision maksimal
-* **CF:** Berfokus pada keberagaman dengan keseimbangan antara akurasi dan variasi
+* **CBF:** Fokus pada konsistensi, cocok untuk cold start user, dan menghasilkan output yang mudah diprediksi dan stabil.
+* **CF:** Menyajikan keseimbangan antara **personalization**, **diversity**, dan **rating kualitas konten** dengan rerata rating rekomendasi mencapai 4.45, serta distribusi harga tiket yang beragam.
 
-### 4. Model Terbaik
+### 4. Model yang Direkomendasikan
 
-* Untuk **pengguna baru** atau **cold start**, **CBF** lebih stabil dengan precision 100%.
-* Untuk **pengguna dengan histori**, **CF** unggul dalam memberikan pengalaman personal yang beragam.
+* Untuk **pengguna baru** atau saat tidak ada data historis, **CBF** menjadi pilihan terbaik karena tidak bergantung pada data interaksi.
+* Untuk **pengguna aktif**, **CF** memberikan nilai lebih tinggi melalui pengalaman personal dan rekomendasi yang disesuaikan.
 
 ---
 
@@ -776,22 +783,7 @@ Secara keseluruhan, proyek ini telah memenuhi sebagian besar tujuan yang ditetap
 | Personalisasi dan variasi rekomendasi | 4 kategori wisata berbeda      | Diversifikasi item   | Tercapai       |
 | Kualitas konten rekomendasi           | Rata-rata rating 4.45 dari 5   | Minimal 4.0          | Tercapai       |
 
-Meskipun nilai RMSE pada model Collaborative Filtering belum sepenuhnya memenuhi target kurang dari 0.35, selisih yang sangat kecil (hanya 0.0044) menunjukkan bahwa model memiliki potensi yang kuat dan dapat ditingkatkan lebih lanjut melalui beberapa pendekatan.
-
-### Analisis Performa Keseluruhan 
-
-**Kekuatan Model**
-
-* Content-Based Filtering mampu memberikan rekomendasi yang konsisten dan akurat berdasarkan kategori, dengan nilai precision sempurna.
-* Collaborative Filtering menghasilkan rekomendasi yang bervariasi dan bersifat personal, dengan kualitas konten yang tinggi.
-* Model secara umum telah memenuhi kebutuhan pengguna akan personalisasi dan keberagaman dalam rekomendasi.
-
-**Area yang Perlu Ditingkatkan**
-
-* RMSE validasi dari model Collaborative Filtering sedikit melebihi target, yang menunjukkan kemungkinan adanya overfitting.
-* Selama pelatihan 100 epoch, nilai *validation loss* cenderung stagnan sementara *training loss* terus menurun, menandakan ketidakseimbangan generalisasi.
-
-Meskipun satu target belum sepenuhnya tercapai, model telah menunjukkan performa yang sangat baik dalam memberikan rekomendasi yang berkualitas, relevan, dan sesuai dengan preferensi pengguna.
+Meskipun nilai RMSE pada model Collaborative Filtering belum sepenuhnya memenuhi target kurang dari 0.35, selisih yang sangat kecil (hanya 0.0044) menunjukkan bahwa model memiliki potensi yang kuat. Secara keseluruhan, model tetap menunjukkan performa yang sangat baik dalam memberikan rekomendasi yang berkualitas, relevan, dan sesuai dengan preferensi pengguna, serta masih dapat ditingkatkan lebih lanjut melalui beberapa pendekatan.
 
 ### Implikasi Bisnis
 
